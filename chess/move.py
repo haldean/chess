@@ -1,4 +1,5 @@
 from chess import rules
+from chess.const import *
 
 def location_str(idx):
     return file_str(idx) + rank_str(idx)
@@ -13,19 +14,26 @@ def rank_str(idx):
 
 
 class Move(object):
-    def __init__(self, start, end, algebraic):
+    def __init__(self, start, end, algebraic, castle):
         self.start = start
         self.end = end
         self.algebraic = algebraic
+        self.castle = castle
 
     @classmethod
     def on_board(cls, start, end, board):
         """
         Calculates the algebraic notation for a move on a board.
         """
+        castle = rules.is_castle(board, start, end)
+        if castle:
+            if castle[1] == kingside:
+                return cls(start, end, "0-0", castle)
+            else:
+                return cls(start, end, "0-0-0", castle)
         p = board[start]
         if p is None:
-            return cls(start, end, "invalid")
+            return cls(start, end, "?", None)
         p_char = p.piece
         capture = ""
         if board[end] is not None:
@@ -40,7 +48,7 @@ class Move(object):
             for loc in board.find(p):
                 if loc == start:
                     continue
-                if rules.move_is_valid(board, Move(loc, end, None)):
+                if rules.move_is_valid(board, Move(loc, end, None, None)):
                     disambig_from.append(loc)
             ranks = [x[0] for x in disambig_from]
             files = [x[1] for x in disambig_from]
@@ -55,7 +63,11 @@ class Move(object):
                 disambig = location_str(start)
         else:
             disambig = ""
-        return cls(start, end, p_char + disambig + capture + end_str)
+        return cls(start, end, p_char + disambig + capture + end_str, None)
+
+    @property
+    def is_castle(self):
+        return self.castle is not None
 
     @property
     def start_rank(self):
