@@ -3,9 +3,11 @@ import copy
 from chess.const import *
 
 class Piece(object):
-    def __init__(self, piece, color):
-        assert piece in pieces
-        assert color in colors
+    def __init__(self, color, piece):
+        if color not in colors:
+            raise ValueError("Invalid color '%s'" % color)
+        if piece not in pieces:
+            raise ValueError("Invalid piece '%s'" % piece)
         self.piece = piece
         self.color = color
 
@@ -15,7 +17,7 @@ class Piece(object):
         assert len(instr) == 2
         if instr in ("__", "  "):
             return None
-        return cls(instr[1], instr[0])
+        return cls(instr[0], instr[1])
 
     def __eq__(self, other):
         if other is None:
@@ -39,22 +41,16 @@ class Board(object):
 
     @classmethod
     def new(cls):
-        p = Piece
-        board = [
-            [p('R', 'w'), p('N', 'w'), p('B', 'w'), p('K', 'w'),
-                p('Q', 'w'), p('B', 'w'), p('N', 'w'), p('R', 'w')],
-            [p('p', 'w') for _ in range(8)],
-            [None for _ in range(8)],
-            [None for _ in range(8)],
-            [None for _ in range(8)],
-            [None for _ in range(8)],
-            [None for _ in range(8)],
-            [None for _ in range(8)],
-            [p('p', 'b') for _ in range(8)],
-            [p('R', 'b'), p('N', 'b'), p('B', 'b'), p('K', 'b'),
-                p('Q', 'b'), p('B', 'b'), p('N', 'b'), p('R', 'b')],
-        ]
-        return cls(board, all_castles, None, None, None)
+        return cls.parse("""
+        bR bN bB bK bQ bB bN bR
+        bp bp bp bp bp bp bp bp
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        wp wp wp wp wp wp wp wp
+        wR wN wB wK wQ wB wN wR
+        """)
 
     @classmethod
     def parse(cls, instr):
@@ -115,8 +111,18 @@ class Board(object):
                 if p and piece == p:
                     yield (ri, fi)
 
+    def __setitem__(self, idx, val):
+        self._board[idx[0]][idx[1]] = val
+
     def __getitem__(self, idx):
-        return self._board[idx[0]][idx[1]]
+        try:
+            return self._board[idx[0]][idx[1]]
+        except TypeError:
+            raise TypeError(
+                "Indeces should be (rank, file) tuples, got '%s'" % idx)
+
+    def __iter__(self):
+        return _BoardIterator(self)
 
     def __str__(self):
         def _str(piece):
@@ -126,3 +132,19 @@ class Board(object):
         return "\n".join("  ".join(_str(p) for p in rank)
             for rank in reversed(self._board))
     __repr__ = __str__
+
+class _BoardIterator(object):
+    def __init__(self, board):
+        self.board = board
+        self.next_loc = (0, 0)
+
+    def next(self):
+        while self.next_loc[0] < 8:
+            while self.next_loc[1] < 8:
+                val = self.board[self.next_loc]
+                val_loc = self.next_loc
+                self.next_loc = (self.next_loc[0], self.next_loc[1] + 1)
+                if val is not None:
+                    return val_loc[0], val_loc[1], val
+            self.next_loc = (self.next_loc[0] + 1, 0)
+        raise StopIteration()

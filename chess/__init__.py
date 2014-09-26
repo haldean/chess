@@ -1,4 +1,3 @@
 from .board import Board, Piece
-from .move import Move
-from .rules import move_is_valid
+from .move import Move, in_check, in_checkmate
 from .const import *

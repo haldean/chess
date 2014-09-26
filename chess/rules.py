@@ -37,26 +37,57 @@ def in_check(b, color, position=None):
         if len(positions) != 1:
             raise Exception("Board has %d %s kings" % (len(positions), color))
         position = positions[0]
-    for rank in range(8):
-        for file in range(8):
-            if b[rank, file] is None:
-                continue
-            if b[rank, file].color == color:
-                continue
-            if _move_is_valid(b, (rank, file), position):
-                return True
+    for rank, file, piece in b:
+        if piece.color == color:
+            continue
+        print 
+        if _move_is_valid(b, (rank, file), position):
+            return True
     return False
+
+
+def in_checkmate(b, color):
+    positions = list(b.find(board.Piece(color, king)))
+    if len(positions) != 1:
+        raise Exception("Board has %d %s kings" % (len(positions), color))
+    position = positions[0]
+    for d_rank in (-1, 0, 1):
+        for d_file in (-1, 0, 1):
+            if not (0 <= position[0] + d_rank < 8):
+                continue
+            if not (0 <= position[1] + d_rank < 8):
+                continue
+            check_pos = (position[0] + d_rank, position[1] + d_file)
+            if not in_check(b, color, check_pos):
+                print check_pos, "is valid"
+                return False
+    return True
 
 
 def _any_between(b, start, end):
     start_rank, start_file = start
     end_rank, end_file = end
-    for r in range(start_rank, end_rank + 1):
-        for f in range(start_file, end_file + 1):
-            if (r, f) == start or (r, f) == end:
-                continue
-            if b[r, f] is not None:
+    min_rank, max_rank = min(start_rank, end_rank), max(start_rank, end_rank)
+    min_file, max_file = min(start_file, end_file), max(start_file, end_file)
+    d_rank = max_rank - min_rank
+    d_file = max_file - min_file
+    if d_rank == 0:
+        for f in range(min_file + 1, max_file):
+            if b[min_rank, f] is not None:
                 return True
+    elif d_file == 0:
+        for r in range(min_rank + 1, max_rank):
+            if b[r, min_file] is not None:
+                return True
+    elif d_rank == d_file:
+        d = max_file - min_file
+        for i in range(1, d):
+            if b[min_rank + i, min_file + i] is not None:
+                return True
+    else:
+        raise ValueError(
+            "Can't determine betweenness if d_rank and d_file aren't equal, or "
+            "if one isn't zero. (d_rank=%s, d_file=%s)" % (d_rank, d_file))
     return False
 
 
@@ -144,25 +175,25 @@ def _move_is_valid(b, start, end):
     if end_p is not None and start_p.color == end_p.color:
         return False
     if start_p.piece == pawn:
-        if _any_between(b, start, end):
+        if not _pawn_move_is_valid(b, start, end):
             return False
-        return _pawn_move_is_valid(b, start, end)
+        return not _any_between(b, start, end)
     if start_p.piece == rook:
-        if _any_between(b, start, end):
+        if not _rook_move_is_valid(start, end):
             return False
-        return _rook_move_is_valid(start, end)
+        return not _any_between(b, start, end)
     if start_p.piece == king:
-        if _any_between(b, start, end):
+        if not _king_move_is_valid(b, start, end):
             return False
-        return _king_move_is_valid(b, start, end)
+        return not _any_between(b, start, end)
     if start_p.piece == knight:
         return _knight_move_is_valid(start, end)
     if start_p.piece == bishop:
-        if _any_between(b, start, end):
+        if not _bishop_move_is_valid(start, end):
             return False
-        return _bishop_move_is_valid(start, end)
+        return not _any_between(b, start, end)
     if start_p.piece == queen:
-        if _any_between(b, start, end):
+        if not _queen_move_is_valid(start, end):
             return False
-        return _queen_move_is_valid(start, end)
+        return not _any_between(b, start, end)
     raise NotImplementedError("No rules for piece " + start_p.piece)
