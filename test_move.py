@@ -34,6 +34,7 @@ class MoveTest(unittest.TestCase):
         __ wp wp wp __ bB wp wp
         __ wN wB wK __ wB wN __
         """
+        b = chess.Board.parse(board)
         m = chess.Move.on_board((2, 3), (1, 3), b)
         self.assertEqual("Rxd2+", str(m))
         m = chess.Move.on_board((5, 4), (0, 4), b)

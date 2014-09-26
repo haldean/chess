@@ -174,6 +174,10 @@ def in_checkmate(b, color):
             if not (0 <= position[1] + d_rank < 8):
                 continue
             check_pos = (position[0] + d_rank, position[1] + d_file)
+            if (d_rank, d_file) != (0, 0):
+                existing_piece = b[check_pos]
+                if existing_piece is not None and existing_piece.color == color:
+                    continue
             if not in_check(b, color, check_pos):
                 return False
     threats = filter(lambda t: t[2].color != color,
