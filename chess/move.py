@@ -3,15 +3,15 @@ import copy
 from chess import board
 from chess.const import *
 
-def location_str(idx):
-    return file_str(idx) + rank_str(idx)
+def _location_str(idx):
+    return _file_str(idx) + _rank_str(idx)
 
 
-def file_str(idx):
+def _file_str(idx):
     return ('a', 'b', 'c', 'd', 'e', 'f', 'g')[idx[1]]
 
 
-def rank_str(idx):
+def _rank_str(idx):
     return str(idx[0] + 1)
 
 
@@ -42,11 +42,11 @@ class Move(object):
         capture = ""
         if b[end] is not None:
             if p_char == "p":
-                p_char = file_str(start)
+                p_char = _file_str(start)
             capture = "x"
         elif p_char == "p":
             p_char = ""
-        end_str = location_str(end)
+        end_str = _location_str(end)
         if p_char != "p":
             disambig_from = []
             for loc in b.find(p):
@@ -60,11 +60,11 @@ class Move(object):
                 disambig = ""
             # Check if all files are distinct
             elif start[1] not in files:
-                disambig = file_str(start)
+                disambig = _file_str(start)
             elif start[0] not in ranks:
-                disambig = rank_str(start)
+                disambig = _rank_str(start)
             else:
-                disambig = location_str(start)
+                disambig = _location_str(start)
         else:
             disambig = ""
         after_move = b.apply(cls(start, end, "test-check-move", None))
@@ -174,6 +174,7 @@ def in_checkmate(b, color):
             if not (0 <= position[1] + d_rank < 8):
                 continue
             check_pos = (position[0] + d_rank, position[1] + d_file)
+            # Check to make sure a friendly piece isn't blocking this position
             if (d_rank, d_file) != (0, 0):
                 existing_piece = b[check_pos]
                 if existing_piece is not None and existing_piece.color == color:
@@ -197,12 +198,19 @@ def in_checkmate(b, color):
 
 
 def pieces_with_access(b, pos):
+    """
+    Returns the pieces on the board with access to the given position.
+    """
     for rank, file, p in b:
         if _move_is_valid(b, (rank, file), pos):
             yield rank, file, p
 
 
 def _any_between(b, start, end):
+    """
+    Returns true if there are any pieces between the start and end point,
+    noninclusive. Can only move along ranks, files or diagonals.
+    """
     start_rank, start_file = start
     end_rank, end_file = end
     min_rank, max_rank = min(start_rank, end_rank), max(start_rank, end_rank)
@@ -230,11 +238,14 @@ def _any_between(b, start, end):
 
 
 def _pawn_move_is_valid(b, start, end):
+    # Ugh.
     start_p = b[start]
     end_p = b[end]
     start_rank, start_file = start
     end_rank, end_file = end
     if end_p is None:
+        # Check for en-passant if we're not moving to an occupied square and
+        # we've moved out of our file.
         if start_file != end_file:
             if b.en_passantable is not None:
                 if b[b.en_passantable].color == start_p.color:
@@ -246,6 +257,8 @@ def _pawn_move_is_valid(b, start, end):
                     if end_rank == 2 and end_file == b.en_passantable[1]:
                         return True
             return False
+        # Gotta be checking colors in here, so we can check if the pawn can move
+        # forward 2 spots or just 1.
         if start_p.color == white:
             if start_rank == 1:
                 if end_rank not in (2, 3):
@@ -259,6 +272,7 @@ def _pawn_move_is_valid(b, start, end):
             elif end_rank - start_rank != -1:
                 return False
     else:
+        # We're capturing.
         if abs(start_file - end_file) != 1:
             return False
         if start_p.color == white:
@@ -307,6 +321,7 @@ def _move_is_valid(b, start, end):
     if start_p is None:
         return False
     end_p = b[end]
+    # Can't capture our own pieces, that would be dumb.
     if end_p is not None and start_p.color == end_p.color:
         return False
     if start_p.piece == pawn:
@@ -322,6 +337,7 @@ def _move_is_valid(b, start, end):
             return False
         return not _any_between(b, start, end)
     if start_p.piece == knight:
+        # Knights get to hop over the other nerds, don't check for any_between.
         return _knight_move_is_valid(start, end)
     if start_p.piece == bishop:
         if not _bishop_move_is_valid(start, end):
