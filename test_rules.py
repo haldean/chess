@@ -184,6 +184,19 @@ class RulesTest(unittest.TestCase):
         b = chess.Board.parse(board)
         self.assertFalse(chess.in_checkmate(b, chess.black))
 
+        board = """
+        __ __ bB bK bR __ __ __
+        bR __ __ __ __ __ __ __
+        __ __ __ wQ __ __ __ __
+        __ __ __ wp __ __ __ __
+        wB __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ __ __ __
+        """
+        b = chess.Board.parse(board)
+        self.assertFalse(chess.in_checkmate(b, chess.black))
+
 
 if __name__ == '__main__':
     unittest.main()

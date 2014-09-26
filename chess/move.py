@@ -204,9 +204,17 @@ def in_checkmate(b, color):
         return True
     # See if other pieces can capture the threatening piece
     tr, tf, threat = threats[0]
-    for cr, cf, cap in pieces_with_access(b, (tr, tf)):
+    for _, _, cap in pieces_with_access(b, (tr, tf)):
         if cap.color == color:
             return False
+    # See if pieces can move between the threatening piece and the king
+    def is_blockable(rank, file):
+        for _, _, blocker in pieces_with_access(b, (rank, file)):
+            if blocker.color == color:
+                return True
+        return False
+    if any(_check_between((tr, tf), position, is_blockable)):
+        return False
     # If this threat can't be taken, and the king can't move out of the way,
     # checkmate, motherfucker.
     return True
@@ -221,10 +229,12 @@ def pieces_with_access(b, pos):
             yield rank, file, p
 
 
-def _any_between(b, start, end):
+def _check_between(start, end, func):
     """
-    Returns true if there are any pieces between the start and end point,
-    noninclusive. Can only move along ranks, files or diagonals.
+    Evaluates func at every square between the start and end point,
+    noninclusive. Can only move along ranks, files or diagonals. func should be
+    a function that takes two parameters: rank and file. Yields the results of
+    the evaluations in an unspecified order.
     """
     start_rank, start_file = start
     end_rank, end_file = end
@@ -234,22 +244,27 @@ def _any_between(b, start, end):
     d_file = max_file - min_file
     if d_rank == 0:
         for f in range(min_file + 1, max_file):
-            if b[min_rank, f] is not None:
-                return True
+            yield func(min_rank, f)
     elif d_file == 0:
         for r in range(min_rank + 1, max_rank):
-            if b[r, min_file] is not None:
-                return True
+            yield func(r, min_file)
     elif d_rank == d_file:
         d = max_file - min_file
         for i in range(1, d):
-            if b[min_rank + i, min_file + i] is not None:
-                return True
+            yield func(min_rank + i, min_file + i)
     else:
         raise ValueError(
             "Can't determine betweenness if d_rank and d_file aren't equal, or "
             "if one isn't zero. (d_rank=%s, d_file=%s)" % (d_rank, d_file))
-    return False
+
+
+def _any_between(b, start, end):
+    """
+    Returns true if there are any pieces between the start and end point,
+    noninclusive. Can only move along ranks, files or diagonals.
+    """
+    return any(_check_between(
+        start, end, lambda rank, file: b[rank, file] is not None))
 
 
 def _pawn_move_is_valid(b, start, end):
