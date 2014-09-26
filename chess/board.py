@@ -128,7 +128,7 @@ class Board(object):
             return self._board[idx[0]][idx[1]]
         except TypeError:
             raise TypeError(
-                "Indeces should be (rank, file) tuples, got '%s'" % idx)
+                "Indeces should be (rank, file) tuples, got '%s'" % (idx,))
 
     def __iter__(self):
         return _BoardIterator(self)

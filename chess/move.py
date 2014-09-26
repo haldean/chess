@@ -11,8 +11,16 @@ def _file_str(idx):
     return ('a', 'b', 'c', 'd', 'e', 'f', 'g')[idx[1]]
 
 
+def file_from_str(file):
+    return ord(file) - ord('a')
+
+
 def _rank_str(idx):
     return str(idx[0] + 1)
+
+
+def rank_from_str(rank):
+    return int(rank) - 1
 
 
 class Move(object):
@@ -114,7 +122,7 @@ class Move(object):
                 self.castle == other.castle)
 
     def __str__(self):
-        return self.algebraic
+        return "%s [%s -> %s]" % (self.algebraic, self.start, self.end)
     __repr__ = __str__
 
 
