@@ -16,6 +16,7 @@ class MoveTest(unittest.TestCase):
         b = chess.Board.parse(board)
         m = chess.Move.on_board((2, 0), (3, 1), b)
         self.assertEqual("axb4", str(m))
+        self.assertEqual(m, chess.parse_algebraic(b, chess.white, "axb4"))
         m = chess.Move.on_board((4, 2), (4, 6), b)
         self.assertEqual("Rcg5", str(m))
         m = chess.Move.on_board((3, 2), (3, 4), b)

@@ -1,0 +1,3 @@
+[ ] Pawn promotion
+[ ] Algebraic notation parsing
+[ ] Persistence

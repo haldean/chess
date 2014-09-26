@@ -111,6 +111,15 @@ class Board(object):
                 if p and piece == p:
                     yield (ri, fi)
 
+    def rank(self, r):
+        return list(self._board[r])
+
+    def file(self, f):
+        res = []
+        for r in range(8):
+            res.append(self[r, f])
+        return res
+
     def __setitem__(self, idx, val):
         self._board[idx[0]][idx[1]] = val
 

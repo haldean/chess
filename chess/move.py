@@ -106,6 +106,13 @@ class Move(object):
     def end_file(self):
         return self.end[1]
 
+    def __eq__(self, other):
+        if not isinstance(other, Move):
+            return False
+        return (self.start == other.start and
+                self.end == other.end and
+                self.castle == other.castle)
+
     def __str__(self):
         return self.algebraic
     __repr__ = __str__
