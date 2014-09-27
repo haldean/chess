@@ -33,10 +33,15 @@ class MoveTest(unittest.TestCase):
 
         m = chess.Move.on_board((4, 2), (4, 6), b)
         self.assertEqual("Rcg5", m.algebraic)
+        self.assertEqual(m, chess.parse_algebraic(b, chess.white, "Rcg5"))
+
         m = chess.Move.on_board((3, 2), (3, 4), b)
         self.assertEqual("Rce4", m.algebraic)
+        self.assertEqual(m, chess.parse_algebraic(b, chess.black, "Rce4"))
+
         m = chess.Move.on_board((2, 4), (4, 4), b)
         self.assertEqual("R3e5", m.algebraic)
+        self.assertEqual(m, chess.parse_algebraic(b, chess.black, "R3e5"))
 
     def testAlgebraicCheck(self):
         board = """
@@ -52,8 +57,11 @@ class MoveTest(unittest.TestCase):
         b = chess.Board.parse(board)
         m = chess.Move.on_board((2, 3), (1, 3), b)
         self.assertEqual("Rxd2+", m.algebraic)
+        self.assertEqual(m, chess.parse_algebraic(b, chess.black, "Rxd2+"))
+
         m = chess.Move.on_board((5, 4), (0, 4), b)
         self.assertEqual("Re1#", m.algebraic)
+        self.assertEqual(m, chess.parse_algebraic(b, chess.black, "Re1#"))
 
     def testCastle(self):
         board = """
@@ -73,6 +81,7 @@ class MoveTest(unittest.TestCase):
         self.assertTrue(ks_m.is_castle)
         self.assertEqual(ks_m.castle, (chess.black, chess.kingside))
         self.assertEqual("0-0", ks_m.algebraic)
+        self.assertEqual(ks_m, chess.parse_algebraic(b, chess.black, "0-0"))
         ks_b = b.apply(ks_m)
         self.assertFalse(ks_b.can_castle(chess.black, chess.kingside))
         self.assertFalse(ks_b.can_castle(chess.black, chess.queenside))
@@ -82,6 +91,7 @@ class MoveTest(unittest.TestCase):
         self.assertTrue(qs_m.is_castle)
         self.assertEqual(qs_m.castle, (chess.black, chess.queenside))
         self.assertEqual("0-0-0", qs_m.algebraic)
+        self.assertEqual(qs_m, chess.parse_algebraic(b, chess.black, "0-0-0"))
         qs_b = b.apply(qs_m)
         self.assertFalse(qs_b.can_castle(chess.black, chess.kingside))
         self.assertFalse(qs_b.can_castle(chess.black, chess.queenside))
