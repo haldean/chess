@@ -16,13 +16,13 @@ def parse_algebraic(b, color, notation):
         else:
             rank = 0
         if notation in ("0-0-0", "O-O-O"):
-            end_file = 5
+            end_file = 2
             side = queenside
         else:
-            end_file = 1
+            end_file = 6
             side = kingside
         return move.Move(
-            (rank, 3), (rank, end_file), algebraic, (color, side))
+            (rank, 4), (rank, end_file), algebraic, (color, side))
     # Find the piece that's moving
     if notation[0] in pieces:
         piece = notation[0]
@@ -103,5 +103,5 @@ def parse_algebraic(b, color, notation):
         if disambig_file is not None and sf != disambig_file:
             continue
         return move.Move((sr, sf), (end_rank, end_file), algebraic, None)
-    raise ValueError("No %s %s (with disambig %s) can attack %s" %
+    raise ValueError("No %s %s (with disambig \"%s\") can attack %s" %
                      (color_names[color], piece_names[piece], disambig, end_loc))

@@ -42,14 +42,14 @@ class Board(object):
     @classmethod
     def new(cls):
         return cls.parse("""
-        bR bN bB bK bQ bB bN bR
+        bR bN bB bQ bK bB bN bR
         bp bp bp bp bp bp bp bp
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         wp wp wp wp wp wp wp wp
-        wR wN wB wK wQ wB wN wR
+        wR wN wB wQ wK wB wN wR
         """)
 
     @classmethod
@@ -77,11 +77,11 @@ class Board(object):
             else:
                 rank = 0
             if move.castle[1] == kingside:
-                board[rank][2] = board[rank][0]
-                board[rank][0] = None
-            else:
-                board[rank][4] = board[rank][7]
+                board[rank][5] = board[rank][7]
                 board[rank][7] = None
+            else:
+                board[rank][3] = board[rank][0]
+                board[rank][0] = None
         en_passantable = None
         start_p = self[move.start]
         if start_p.piece == pawn:

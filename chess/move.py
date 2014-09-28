@@ -3,7 +3,7 @@ import copy
 from chess import board
 from chess.const import *
 
-def _location_str(idx):
+def location_str(idx):
     return _file_str(idx) + _rank_str(idx)
 
 
@@ -12,6 +12,8 @@ def _file_str(idx):
 
 
 def file_from_str(file):
+    if file not in files:
+        raise ValueError("Invalid file \"%s\"" % file)
     return ord(file) - ord('a')
 
 
@@ -20,6 +22,8 @@ def _rank_str(idx):
 
 
 def rank_from_str(rank):
+    if rank not in ranks:
+        raise ValueError("Invalid rank \"%s\"" % rank)
     return int(rank) - 1
 
 
@@ -54,7 +58,7 @@ class Move(object):
             capture = "x"
         elif p_char == "p":
             p_char = ""
-        end_str = _location_str(end)
+        end_str = location_str(end)
         if p_char != "p":
             disambig_from = []
             for loc in b.find(p):
@@ -72,7 +76,7 @@ class Move(object):
             elif start[0] not in ranks:
                 disambig = _rank_str(start)
             else:
-                disambig = _location_str(start)
+                disambig = location_str(start)
         else:
             disambig = ""
         after_move = b.apply(cls(start, end, "test-check-move", None))
@@ -137,15 +141,15 @@ def is_castle(b, start, end):
         rank = 7
     if start[0] != rank or end[0] != rank:
         return False
-    if end[1] == 1:
+    if end[1] == 6:
         if b.can_castle(color, kingside):
-            for file in (3, 2, 1):
+            for file in (4, 5, 6):
                 if in_check(b, color, (rank, file)):
                     return False
             return (color, kingside)
-    elif end[1] == 5:
+    elif end[1] == 2:
         if b.can_castle(color, queenside):
-            for file in (3, 4, 5):
+            for file in (4, 3, 2):
                 if in_check(b, color, (rank, file)):
                     return False
             return (color, queenside)
@@ -250,8 +254,16 @@ def _check_between(start, end, func):
             yield func(r, min_file)
     elif d_rank == d_file:
         d = max_file - min_file
+        if max_file == end_file:
+            sign_file = 1
+        else:
+            sign_file = -1
+        if max_rank == end_rank:
+            sign_rank = 1
+        else:
+            sign_rank = -1
         for i in range(1, d):
-            yield func(min_rank + i, min_file + i)
+            yield func(start_rank + sign_rank * i, start_file + sign_file * i)
     else:
         raise ValueError(
             "Can't determine betweenness if d_rank and d_file aren't equal, or "
@@ -323,7 +335,7 @@ def _king_move_is_valid(b, start, end):
         return True
     start_rank, start_file = start
     end_rank, end_file = end
-    return abs(start_rank - end_rank) < 1 and abs(start_file - end_file) < 1
+    return abs(start_rank - end_rank) <= 1 and abs(start_file - end_file) <= 1
 
 def _knight_move_is_valid(start, end):
     start_rank, start_file = start
