@@ -1,3 +1,6 @@
+import json
+
+from chess import algebraic
 from chess import board
 from chess import move
 from chess.const import *
@@ -18,6 +21,14 @@ class Game(object):
     @property
     def current_board(self):
         return self.boards[-1]
+
+    def algebraic_move(self, m):
+        try:
+            parsed = algebraic.parse_algebraic(
+                self.current_board, self.to_play, m)
+        except Exception as e:
+            raise InvalidMoveError(e)
+        self.move(parsed)
 
     def move(self, m):
         if not m.is_valid(self.current_board):
@@ -49,3 +60,10 @@ class Game(object):
     def __str__(self):
         return "Game with %d moves, %s to play" % (
             len(self.moves), color_names[self.to_play])
+
+    def to_json_dict(self):
+        return {
+            "boards":  [b.to_json_dict() for b in self.boards],
+            "moves":   [m.to_json_dict() for m in self.moves],
+            "to_play": self.to_play,
+        }

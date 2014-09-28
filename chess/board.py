@@ -1,4 +1,5 @@
 import copy
+import json
 
 from chess.const import *
 
@@ -141,6 +142,17 @@ class Board(object):
         return "\n".join("  ".join(_str(p) for p in rank)
             for rank in reversed(self._board))
     __repr__ = __str__
+
+    def to_json_dict(self):
+        def _str(piece):
+            if piece is None:
+                return ""
+            return str(piece)
+        return {
+            "board":          [_str(p) for rank in self._board for p in rank],
+            "open_castles":   list(self._open_castles),
+            "en_passantable": self.en_passantable,
+        }
 
 class _BoardIterator(object):
     def __init__(self, board):

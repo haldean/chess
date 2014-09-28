@@ -129,6 +129,14 @@ class Move(object):
         return "%s [%s -> %s]" % (self.algebraic, self.start, self.end)
     __repr__ = __str__
 
+    def to_json_dict(self):
+        return {
+            "algebraic": self.algebraic,
+            "start":     self.start,
+            "end":       self.end,
+            "castle":    self.castle,
+        }
+
 
 def is_castle(b, start, end):
     start_p = b[start]

@@ -1,3 +1,4 @@
+import chess
 import gevent.queue
 
 from engine import store
@@ -28,9 +29,9 @@ class ChessHost(object):
             ev.respond(event.Response(event.status_bad_game))
             return
         try:
-            game.move(ev.move)
+            game.algebraic_move(ev.move)
             ev.respond(event.Response(event.status_ok, ev.game_id, game))
-        except InvalidMoveError as e:
+        except chess.InvalidMoveError as e:
             ev.respond(event.Response(
                 event.status_bad_move, ev.game_id, game, str(e)))
 
