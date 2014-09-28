@@ -1,4 +1,5 @@
 import copy
+import itertools
 import json
 
 from chess.const import *
@@ -149,8 +150,8 @@ class Board(object):
                 return ""
             return str(piece)
         return {
-            "board":          [_str(p) for rank in self._board for p in rank],
-            "open_castles":   list(self._open_castles),
+            "board": [_str(p) for p in itertools.chain.from_iterable(self._board)],
+            "open_castles": list(self._open_castles),
             "en_passantable": self.en_passantable,
         }
 
