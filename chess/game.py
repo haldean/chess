@@ -35,16 +35,16 @@ class Game(object):
         else:
             self.to_play = white
 
-    def summary(self):
+    def summary(self, sep=" "):
         pairs = [self.moves[i:i+2] for i in range(0, len(self.moves), 2)]
         pair_strs = []
         for i, pair in enumerate(pairs):
             if len(pair) == 1:
-                pair_strs.append("%d. %s" % (i + 1, pair[0].algebraic))
+                pair_strs.append("%d.%s" % (i + 1, pair[0].algebraic))
             else:
-                pair_strs.append("%d. %s %s" % (
+                pair_strs.append("%d.%s %s" % (
                     i + 1, pair[0].algebraic, pair[1].algebraic))
-        return "\n".join(pair_strs)
+        return sep.join(pair_strs)
 
     def __str__(self):
         return "Game with %d moves, %s to play" % (
