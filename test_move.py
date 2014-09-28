@@ -65,19 +65,19 @@ class MoveTest(unittest.TestCase):
 
     def testCastle(self):
         board = """
-        bR __ __ bK __ __ __ bR
+        bR __ __ __ bK __ __ bR
         bp __ bp bp __ bp bp bp
         __ __ __ __ __ __ __ __
         __ __ wR __ __ __ __ wR
         __ bp __ __ __ __ __ __
         wp __ __ __ __ __ __ __
         __ wp wp wp wp wp wp wp
-        __ wN wB wK wQ wB wN __
+        __ wN wB wQ wK wB wN __
         """
         b = chess.Board.parse(board)
         self.assertTrue(b.can_castle(chess.black, chess.kingside))
 
-        ks_m = chess.Move.on_board((7, 3), (7, 1), b)
+        ks_m = chess.Move.on_board((7, 4), (7, 6), b)
         self.assertTrue(ks_m.is_castle)
         self.assertEqual(ks_m.castle, (chess.black, chess.kingside))
         self.assertEqual("0-0", ks_m.algebraic)
@@ -85,9 +85,9 @@ class MoveTest(unittest.TestCase):
         ks_b = b.apply(ks_m)
         self.assertFalse(ks_b.can_castle(chess.black, chess.kingside))
         self.assertFalse(ks_b.can_castle(chess.black, chess.queenside))
-        self.assertEqual(ks_b[7, 2], chess.Piece(chess.black, chess.rook))
+        self.assertEqual(ks_b[7, 5], chess.Piece(chess.black, chess.rook))
 
-        qs_m = chess.Move.on_board((7, 3), (7, 5), b)
+        qs_m = chess.Move.on_board((7, 4), (7, 2), b)
         self.assertTrue(qs_m.is_castle)
         self.assertEqual(qs_m.castle, (chess.black, chess.queenside))
         self.assertEqual("0-0-0", qs_m.algebraic)
@@ -95,7 +95,7 @@ class MoveTest(unittest.TestCase):
         qs_b = b.apply(qs_m)
         self.assertFalse(qs_b.can_castle(chess.black, chess.kingside))
         self.assertFalse(qs_b.can_castle(chess.black, chess.queenside))
-        self.assertEqual(qs_b[7, 4], chess.Piece(chess.black, chess.rook))
+        self.assertEqual(qs_b[7, 3], chess.Piece(chess.black, chess.rook))
 
 
 if __name__ == '__main__':

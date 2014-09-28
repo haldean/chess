@@ -16,14 +16,14 @@ class RulesTest(unittest.TestCase):
         self.assertFalse(m.is_valid(b))
 
         board = """
-        bR bN bB bK bQ bB bN bR
+        bR bN bB bQ bK bB bN bR
         bp __ bp bp __ bp bp bp
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         __ bp __ __ __ __ __ __
         wp __ __ __ bp __ __ __
         __ wp wp wp wp wp wp wp
-        wR wN wB wK wQ wB wN wR
+        wR wN wB wQ wK wB wN wR
         """
         b = chess.Board.parse(board)
         m = chess.Move.on_board((2, 0), (3, 1), b)
@@ -39,14 +39,14 @@ class RulesTest(unittest.TestCase):
 
     def testBishop(self):
         board = """
-        bR bN bB bK bQ bB bN bR
+        bR bN bB bQ bK bB bN bR
         bp __ bp bp __ bp bp bp
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         __ bp __ __ __ __ __ __
         __ __ __ __ bp __ __ __
         __ __ wp wp wp wp wp wp
-        wR wN wB wK wQ wB wN wR
+        wR wN wB wQ wK wB wN wR
         """
         b = chess.Board.parse(board)
         m = chess.Move.on_board((0, 2), (2, 0), b)
@@ -54,33 +54,33 @@ class RulesTest(unittest.TestCase):
 
     def testCastle(self):
         board = """
-        bR __ __ bK bQ bB bN bR
+        bR __ __ __ bK bB bN bR
         bp __ bp bp __ bp bp bp
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
         __ bp __ __ __ __ __ __
         wp __ __ __ bp __ __ __
         __ wp wp wp wp wp wp wp
-        wR wN wB wK wQ wB wN wR
+        wR wN wB wQ wK wB wN wR
         """
         b = chess.Board.parse(board)
-        m = chess.Move.on_board((7, 3), (7, 1), b)
+        m = chess.Move.on_board((7, 4), (7, 2), b)
         self.assertTrue(m.is_valid(b))
-        m = chess.Move.on_board((7, 3), (7, 5), b)
+        m = chess.Move.on_board((7, 4), (7, 6), b)
         self.assertFalse(m.is_valid(b))
 
         board = """
-        bR __ __ bK bQ bB bN bR
-        bp __ bp bp __ bp bp bp
+        bR __ __ __ bK bB bN bR
+        bp __ bp __ __ bp bp bp
         __ __ __ __ __ __ __ __
         __ __ __ __ __ __ __ __
-        __ wR __ __ __ __ __ __
+        __ __ __ wR __ __ __ __
         wp __ __ __ bp __ __ __
         __ wp wp wp wp wp wp wp
-        wR wN wB wK wQ wB wN wR
+        wR wN wB wQ wK wB wN wR
         """
         b = chess.Board.parse(board)
-        m = chess.Move.on_board((7, 3), (7, 1), b)
+        m = chess.Move.on_board((7, 4), (7, 2), b)
         self.assertFalse(m.is_valid(b))
 
     def testEnPassant(self):

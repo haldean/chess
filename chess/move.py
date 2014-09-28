@@ -209,6 +209,9 @@ def in_checkmate(b, color):
     # See if other pieces can capture the threatening piece
     tr, tf, threat = threats[0]
     for _, _, cap in pieces_with_access(b, (tr, tf)):
+        # We already checked the king, don't take it into account here.
+        if cap.piece == king:
+            continue
         if cap.color == color:
             return False
     # See if pieces can move between the threatening piece and the king

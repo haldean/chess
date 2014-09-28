@@ -1,4 +1,4 @@
-import gevent
+import gevent.queue
 
 from engine import store
 from engine import event
@@ -35,7 +35,7 @@ class ChessHost(object):
                 event.status_bad_move, ev.game_id, game, str(e)))
 
     @classmethod
-    def start():
-        store = store.InMemoryStore()
+    def start(cls):
+        s = store.InMemoryStore()
         queue = gevent.queue.Queue()
-        return ChessHost(store, queue)
+        return cls(s, queue), queue
