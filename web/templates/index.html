@@ -1,0 +1,144 @@
+<html>
+<head>
+    <title>Chess by TOKD</title>
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,900' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="static/chess.js"></script>
+    <style>
+    body {
+        font-family: Lato, sans-serif;
+        max-width: 33em;
+        margin: 24pt auto;
+    }
+
+    h1 {
+        font-size: 36pt;
+        margin-bottom: 0;
+    }
+
+    #board {
+        width: 33em;
+        height: 33em;
+        border: 0.5em solid #000;
+        padding: 0;
+    }
+    #board tr {
+        height: 4em;
+        padding: 0;
+        margin: 0;
+    }
+    #board td {
+        width: 4em;
+        padding: 0;
+        margin: 0;
+        vertical-align: center;
+        text-align: center;
+    }
+
+    hr {
+        height: 1.5em;
+        background-color: #000;
+        border: 0;
+        margin-bottom: 2em;
+    }
+
+    .dim {
+        color: #DDD;
+    }
+
+    .black {
+        background-color: #CCC;
+    }
+
+    .white {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+<h1>Chess <span class="dim">by TOKD</span></h1>
+<hr />
+<table id="board">
+    <tr>
+        <td id="a8" class="white"></td>
+        <td id="b8" class="black"></td>
+        <td id="c8" class="white"></td>
+        <td id="d8" class="black"></td>
+        <td id="e8" class="white"></td>
+        <td id="f8" class="black"></td>
+        <td id="g8" class="white"></td>
+        <td id="h8" class="black"></td>
+    </tr>
+    <tr>
+        <td id="a7" class="black"></td>
+        <td id="b7" class="white"></td>
+        <td id="c7" class="black"></td>
+        <td id="d7" class="white"></td>
+        <td id="e7" class="black"></td>
+        <td id="f7" class="white"></td>
+        <td id="g7" class="black"></td>
+        <td id="h7" class="white"></td>
+    </tr>
+    <tr>
+        <td id="a6" class="white"></td>
+        <td id="b6" class="black"></td>
+        <td id="c6" class="white"></td>
+        <td id="d6" class="black"></td>
+        <td id="e6" class="white"></td>
+        <td id="f6" class="black"></td>
+        <td id="g6" class="white"></td>
+        <td id="h6" class="black"></td>
+    </tr>
+    <tr>
+        <td id="a5" class="black"></td>
+        <td id="b5" class="white"></td>
+        <td id="c5" class="black"></td>
+        <td id="d5" class="white"></td>
+        <td id="e5" class="black"></td>
+        <td id="f5" class="white"></td>
+        <td id="g5" class="black"></td>
+        <td id="h5" class="white"></td>
+    </tr>
+    <tr>
+        <td id="a4" class="white"></td>
+        <td id="b4" class="black"></td>
+        <td id="c4" class="white"></td>
+        <td id="d4" class="black"></td>
+        <td id="e4" class="white"></td>
+        <td id="f4" class="black"></td>
+        <td id="g4" class="white"></td>
+        <td id="h4" class="black"></td>
+    </tr>
+    <tr>
+        <td id="a3" class="black"></td>
+        <td id="b3" class="white"></td>
+        <td id="c3" class="black"></td>
+        <td id="d3" class="white"></td>
+        <td id="e3" class="black"></td>
+        <td id="f3" class="white"></td>
+        <td id="g3" class="black"></td>
+        <td id="h3" class="white"></td>
+    </tr>
+    <tr>
+        <td id="a2" class="white"></td>
+        <td id="b2" class="black"></td>
+        <td id="c2" class="white"></td>
+        <td id="d2" class="black"></td>
+        <td id="e2" class="white"></td>
+        <td id="f2" class="black"></td>
+        <td id="g2" class="white"></td>
+        <td id="h2" class="black"></td>
+    </tr>
+    <tr>
+        <td id="a1" class="black"></td>
+        <td id="b1" class="white"></td>
+        <td id="c1" class="black"></td>
+        <td id="d1" class="white"></td>
+        <td id="e1" class="black"></td>
+        <td id="f1" class="white"></td>
+        <td id="g1" class="black"></td>
+        <td id="h1" class="white"></td>
+    </tr>
+</table>
+</body>
+</html>
