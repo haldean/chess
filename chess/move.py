@@ -59,7 +59,7 @@ class Move(object):
         elif p_char == "p":
             p_char = ""
         end_str = location_str(end)
-        if p_char != "p":
+        if p.piece != "p":
             disambig_from = []
             for loc in b.find(p):
                 if loc == start:

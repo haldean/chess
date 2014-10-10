@@ -4,8 +4,11 @@ import flask
 import json
 import os
 
+from flask.ext import socketio
+
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
+sockapp = socketio.SocketIO(app)
 
 @app.route("/")
 def index():
@@ -21,6 +24,8 @@ def game(game_link):
         move = chess.parse_algebraic(
             game.current_board, color, move_str)
         rstore.move(game_id, move)
+        # Reload all the other players.
+        sockapp.emit("reload", "", room=game_id)
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
     access = chess.accessibility_map(game.current_board);
@@ -33,8 +38,16 @@ def game(game_link):
         summary=game.summary("\n"),
         accessibility=json.dumps(access))
 
+@sockapp.on("join")
+def on_join(data):
+    # When clients join, we hook them into a room just for their game so that we
+    # can force-reload them when the other player moves.
+    link = data["link"]
+    _, game_id, _ = rstore.game_from_link(link)
+    socketio.join_room(game_id)
+
 if __name__ == "__main__":
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
-    app.run(debug=True)
+    sockapp.run(app)
