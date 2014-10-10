@@ -46,6 +46,11 @@ $(document).ready(function() {
                 var new_f = file_from_str(ev.target.id);
                 current_board[new_r * 8 + new_f] = current_board[r * 8 + f];
                 current_board[r * 8 + f] = "";
+                if (game.to_play == "w") {
+                    game.to_play = "b";
+                } else {
+                    game.to_play = "w";
+                }
                 load_board(current_board);
             }
         });
