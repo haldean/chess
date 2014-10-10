@@ -1,7 +1,12 @@
 body {
     font-family: Lato, sans-serif;
-    max-width: 33em;
+    max-width: 44em;
     margin: 24pt auto;
+}
+
+pre {
+    font-family: Cousine, monospace;
+    font-weight: 700;
 }
 
 h1 {
@@ -45,4 +50,23 @@ input[type=submit]:hover {
 
 label {
     font-size: 11pt;
+}
+
+button {
+    border: none;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 12pt;
+    padding: 6pt 12pt;
+    border-radius: 4pt;
+}
+
+button.confirm {
+    background: #64FF56;
+    color: #327F2B;
+}
+
+button.cancel {
+    background: #DDD;
+    color: #888;
 }

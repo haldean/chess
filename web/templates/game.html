@@ -12,6 +12,7 @@
         height: 33em;
         border: 0.5em solid #000;
         padding: 0;
+        float: left;
     }
     #board tr {
         height: 4em;
@@ -38,9 +39,62 @@
         width: 90%;
         height: 90%;
     }
+
+    #popup {
+        background: rgba(0, 0, 0, 0.4);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    #alert {
+        width: 26em;
+        height: 30pt;
+        margin: 15% auto;
+        background: #FFF;
+        border-radius: 10pt;
+        padding: 10pt 15pt;
+        display: table;
+        overflow: hidden;
+    }
+
+    #alert_text {
+        display: table-cell;
+        vertical-align: middle;
+        font-weight: bold;
+        font-size: 18pt;
+    }
+
+    #alert button {
+        float: right;
+    }
+
+    #to_move {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2em;
+        font-size: 14pt;
+    }
+
+    #summary {
+        font-size: 12pt;
+        float: left;
+        padding-left: 1.5em;
+        color: #CCC;
+    }
     </style>
 {% endblock %}
 {% block body %}
+<div id="to_move">
+{% if color_name == to_play %}
+You are {{ color_name }}, your move.
+{% else %}
+You are {{ color_name }}, {{ to_play }} to move.
+{% endif %}
+</div>
 <table id="board" cellspacing="0">
     <tr>
         <td id="a8" class="white"></td>
@@ -123,5 +177,14 @@
         <td id="h1" class="white"></td>
     </tr>
 </table>
-<pre>{{ summary }}</pre>
+<pre id="summary">{{ summary }}</pre>
+<div id="popup">
+    <div id="alert">
+        <div id="alert_text">
+            Send <span id="alert_move"></span>?
+        </div>
+        <button class="confirm">Send</button>
+        <button class="cancel">Cancel</button>
+    </div>
+</div>
 {% endblock %}

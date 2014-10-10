@@ -24,18 +24,30 @@ $(document).ready(function() {
                     square_elem.innerHTML = (
                         "<img class='piece' src='/static/" + piece + ".svg' " +
                         "data-piece='" + piece + "' " +
+                        "data-color='" + piece[0] + "' " +
                         "data-rank='" + r + "' data-file='" + f + "'>");
                 } else {
                     square_elem.innerHTML = "";
                 }
             }
         }
+    }
+
+    function prevent_drag() {
+        $(".piece").on("dragstart", function(ev) {
+            ev.preventDefault();
+        });
+    }
+
+    function init_board(b) {
+        load_board(b);
         if (player == game.to_play) {
-            $(".piece").draggable();
-        } else {
-            $(".piece").on("dragstart", function(ev) {
+            $(".piece[data-color='" + player + "']").draggable();
+            $(".piece[data-color!='" + player + "']").on("dragstart", function(ev) {
                 ev.preventDefault();
             });
+        } else {
+            prevent_drag();
         }
         $("#board td").droppable({
             drop: function(ev, ui) {
@@ -46,9 +58,12 @@ $(document).ready(function() {
                 var new_r = rank_from_str(ev.target.id);
                 var new_f = file_from_str(ev.target.id);
                 var good = false;
+                var move_name = undefined;
                 for (var i = 0; i < accessibility[new_r][new_f].length; i++) {
-                    if (accessibility[new_r][new_f][i] == start_loc) {
+                    access = accessibility[new_r][new_f][i];
+                    if (access.start == start_loc) {
                         good = true;
+                        move_name = access.name;
                         break;
                     }
                 }
@@ -56,19 +71,33 @@ $(document).ready(function() {
                     load_board(current_board);
                     return;
                 }
+                // Make a copy of the old board.
+                old_board = [];
+                for (var i = 0; i < 64; i++) {
+                    old_board.push(current_board[i]);
+                }
                 current_board[new_r * 8 + new_f] = current_board[r * 8 + f];
                 current_board[r * 8 + f] = "";
-                if (game.to_play == "w") {
-                    game.to_play = "b";
-                } else {
-                    game.to_play = "w";
-                }
                 load_board(current_board);
+                $("#alert_move").text(move_name);
+                $("#alert button.confirm").click(function() {
+                    $.post(
+                        window.location.pathname,
+                        { "move": move_name, },
+                        function(data, textStatus, xhr) {
+                            window.location.reload();
+                        });
+                });
+                $("#alert button.cancel").click(function() {
+                    $("#popup").hide();
+                    init_board(old_board);
+                });
+                $("#popup").show();
+                prevent_drag();
             }
         });
         current_board = b;
     }
 
-    load_board(game.boards[game.boards.length - 1].board);
-    console.log(game);
+    init_board(game.boards[game.boards.length - 1].board);
 });

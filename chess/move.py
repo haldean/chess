@@ -261,7 +261,9 @@ def accessibility_map(b):
         for r in range(8):
             for f in range(8):
                 if _move_is_valid(b, (rank, file), (r, f)):
-                    access[r][f].append(location_str((rank, file)))
+                    loc = location_str((rank, file))
+                    mov = Move.on_board((rank, file), (r, f), b)
+                    access[r][f].append(dict(start=loc, name=mov.algebraic))
     return access
 
 
