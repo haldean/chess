@@ -42,8 +42,20 @@ $(document).ready(function() {
                 var elem = ui.draggable;
                 var r = elem.data().rank;
                 var f = elem.data().file;
+                var start_loc = loc_str(r, f);
                 var new_r = rank_from_str(ev.target.id);
                 var new_f = file_from_str(ev.target.id);
+                var good = false;
+                for (var i = 0; i < accessibility[new_r][new_f].length; i++) {
+                    if (accessibility[new_r][new_f][i] == start_loc) {
+                        good = true;
+                        break;
+                    }
+                }
+                if (!good) {
+                    load_board(current_board);
+                    return;
+                }
                 current_board[new_r * 8 + new_f] = current_board[r * 8 + f];
                 current_board[r * 8 + f] = "";
                 if (game.to_play == "w") {

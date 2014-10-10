@@ -8,7 +8,7 @@ def location_str(idx):
 
 
 def _file_str(idx):
-    return ('a', 'b', 'c', 'd', 'e', 'f', 'g')[idx[1]]
+    return ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')[idx[1]]
 
 
 def file_from_str(file):
@@ -255,6 +255,16 @@ def pieces_with_access(b, pos):
             yield rank, file, p
 
 
+def accessibility_map(b):
+    access = [[[] for _ in range(8)] for _ in range(8)]
+    for rank, file, p in b:
+        for r in range(8):
+            for f in range(8):
+                if _move_is_valid(b, (rank, file), (r, f)):
+                    access[r][f].append(location_str((rank, file)))
+    return access
+
+
 def _check_between(start, end, func):
     """
     Evaluates func at every square between the start and end point,
@@ -311,13 +321,15 @@ def _pawn_move_is_valid(b, start, end):
         # Check for en-passant if we're not moving to an occupied square and
         # we've moved out of our file.
         if start_file != end_file:
+            if abs(start_file - end_file) != 1:
+                return False
             if b.en_passantable is not None:
                 if b[b.en_passantable].color == start_p.color:
                     return False
-                if start_p.color == white:
+                if start_p.color == white and start_rank == 4:
                     if end_rank == 5 and end_file == b.en_passantable[1]:
                         return True
-                if start_p.color == black:
+                if start_p.color == black and start_rank == 3:
                     if end_rank == 2 and end_file == b.en_passantable[1]:
                         return True
             return False

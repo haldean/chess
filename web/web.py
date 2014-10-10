@@ -1,3 +1,4 @@
+import chess
 import engine.store
 import flask
 import json
@@ -13,11 +14,13 @@ def index():
 @app.route("/game/<game_link>")
 def game(game_link):
     color, game_id, game = rstore.game_from_link(game_link)
+    access = chess.accessibility_map(game.current_board);
     return flask.render_template(
         "game.html",
         game=json.dumps(game.to_json_dict()),
         player=color,
-        summary=game.summary())
+        summary=game.summary(),
+        accessibility=json.dumps(access))
 
 @app.route("/login")
 def login():
