@@ -32,13 +32,9 @@ class Piece(object):
 
 
 class Board(object):
-    def __init__(
-            self, board, open_castles, last_move, last_board,
-            en_passantable):
+    def __init__(self, board, open_castles, en_passantable):
         self._open_castles = open_castles
         self._board = board
-        self.last_move = last_move
-        self.last_board = last_board
         self.en_passantable = en_passantable
 
     @classmethod
@@ -58,7 +54,7 @@ class Board(object):
     def parse(cls, instr):
         board = [[Piece.parse(pstr) for pstr in line.strip().split()]
                  for line in reversed(instr.strip().split("\n"))]
-        return cls(board, all_castles, None, None, None)
+        return cls(board, all_castles, None)
 
     def can_castle(self, color, side):
         return (color, side) in self._open_castles
@@ -105,7 +101,7 @@ class Board(object):
                     if move.end_rank == passing_rank and move.end_file in self.en_passantable:
                         p_loc = (en_passant_rank, move.end[1])
                         board[p_loc[0]][p_loc[1]] = None
-        return self.__class__(board, open_castles, move, self, en_passantable)
+        return self.__class__(board, open_castles, en_passantable)
 
     def find(self, piece):
         for ri, rank in enumerate(self._board):
@@ -154,6 +150,21 @@ class Board(object):
             "open_castles": list(self._open_castles),
             "en_passantable": self.en_passantable,
         }
+
+    @classmethod
+    def from_json_dict(cls, jobj):
+        def _unstr(piece):
+            if piece:
+                return Piece.parse(piece)
+            return None
+        flat_board = [_unstr(p) for p in jobj["board"]]
+        board = [flat_board[i:i+8] for i in range(0, 64, 8)]
+        open_castles = set(tuple(c) for c in jobj["open_castles"])
+        if "en_passantable" in jobj and jobj["en_passantable"]:
+            en_passantable = tuple(jobj["en_passantable"])
+        else:
+            en_passantable = None
+        return cls(board, open_castles, en_passantable)
 
 class _BoardIterator(object):
     def __init__(self, board):

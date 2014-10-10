@@ -18,6 +18,13 @@ class Game(object):
     def new(cls):
         return Game([board.Board.new()], [], white)
 
+    @classmethod
+    def from_json_dict(cls, jobj):
+        boards = [board.Board.from_json_dict(b) for b in jobj["boards"]]
+        moves = [move.Move.from_json_dict(m) for m in jobj["moves"]]
+        to_play = jobj["to_play"]
+        return cls(boards, moves, to_play)
+
     @property
     def current_board(self):
         return self.boards[-1]
