@@ -30,7 +30,13 @@ $(document).ready(function() {
                 }
             }
         }
-        $(".piece").draggable();
+        if (player == game.to_play) {
+            $(".piece").draggable();
+        } else {
+            $(".piece").on("dragstart", function(ev) {
+                ev.preventDefault();
+            });
+        }
         $("#board td").droppable({
             drop: function(ev, ui) {
                 var elem = ui.draggable;
@@ -46,14 +52,6 @@ $(document).ready(function() {
         current_board = b;
     }
 
-    test_board = [
-        "wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR",
-        "wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp",
-        "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "",
-        "bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp",
-        "bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"];
-    load_board(test_board);
+    load_board(game.boards[game.boards.length - 1].board);
+    console.log(game);
 });

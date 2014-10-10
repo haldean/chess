@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block head %}
-    <script src="static/chess.js"></script>
+    <script src="/static/chess.js"></script>
+    <script>
+    var game = {{ game|safe }};
+    var player = "{{ player }}";
+    </script>
     <style>
     #board {
         width: 33em;
@@ -31,7 +35,7 @@
     </style>
 {% endblock %}
 {% block body %}
-<table id="board">
+<table id="board" cellspacing="0">
     <tr>
         <td id="a8" class="white"></td>
         <td id="b8" class="black"></td>
@@ -113,4 +117,5 @@
         <td id="h1" class="white"></td>
     </tr>
 </table>
+<pre>{{ summary }}</pre>
 {% endblock %}

@@ -1,6 +1,7 @@
 import chess
 import json
 import redis
+import uuid
 
 _REDIS_PORT = 6379
 _REDIS_PREFIX = ""
@@ -36,6 +37,22 @@ class RedisStore(object):
     def get(self, id):
         game_str = self.rconn.get(_REDIS_PREFIX + "chess:games:%d:game" % id)
         return chess.Game.from_json_dict(json.loads(game_str))
+
+    def game_from_link(self, link):
+        color, game_id = json.loads(self.rconn.get(
+            _REDIS_PREFIX + "chess:links:%s" % link))
+        return color, game_id, self.get(game_id)
+
+    def create_link(self, id):
+        white_link = uuid.uuid4()
+        black_link = uuid.uuid4()
+        self.rconn.set(
+            _REDIS_PREFIX + "chess:links:%s" % white_link,
+            json.dumps((chess.white, id)))
+        self.rconn.set(
+            _REDIS_PREFIX + "chess:links:%s" % black_link,
+            json.dumps((chess.black, id)))
+        return white_link, black_link
 
     def move(self, id, move):
         game = self.get(id)

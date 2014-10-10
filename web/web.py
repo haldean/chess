@@ -1,16 +1,23 @@
+import engine.store
 import flask
+import json
 import os
 
 app = flask.Flask("chess")
-sqlc = psychopg2.connect("dbname='chess' host='localhost'")
+rstore = engine.store.RedisStore()
 
 @app.route("/")
 def index():
     return flask.render_template("index.html")
 
-@app.route("/game")
-def game():
-    return flask.render_template("game.html")
+@app.route("/game/<game_link>")
+def game(game_link):
+    color, game_id, game = rstore.game_from_link(game_link)
+    return flask.render_template(
+        "game.html",
+        game=json.dumps(game.to_json_dict()),
+        player=color,
+        summary=game.summary())
 
 @app.route("/login")
 def login():
