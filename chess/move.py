@@ -137,6 +137,17 @@ class Move(object):
             "castle":    self.castle,
         }
 
+    @classmethod
+    def from_json_dict(cls, jobj):
+        algebraic = jobj["algebraic"]
+        start = tuple(jobj["start"])
+        end = tuple(jobj["end"])
+        if "castle" in jobj and jobj["castle"]:
+            castle = tuple(jobj["castle"])
+        else:
+            castle = None
+        return cls(start, end, algebraic, castle)
+
 
 def is_castle(b, start, end):
     start_p = b[start]

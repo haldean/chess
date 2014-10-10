@@ -1,4 +1,5 @@
 import chess
+import json
 import redis
 
 _REDIS_PORT = 6379
@@ -30,10 +31,11 @@ class RedisStore(object):
         id = self.rconn.incr(_REDIS_PREFIX + "chess:games:nextid")
         game = chess.Game.new()
         self._set_game(id, game)
+        return id, game
 
     def get(self, id):
         game_str = self.rconn.get(_REDIS_PREFIX + "chess:games:%d:game" % id)
-        return chess.Game.from_json_dict(game_str)
+        return chess.Game.from_json_dict(json.loads(game_str))
 
     def move(self, id, move):
         game = self.get(id)
