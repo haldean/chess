@@ -1,0 +1,48 @@
+body {
+    font-family: Lato, sans-serif;
+    max-width: 33em;
+    margin: 24pt auto;
+}
+
+h1 {
+    font-size: 36pt;
+    margin-bottom: 0;
+}
+
+hr {
+    height: 1.5em;
+    background-color: #000;
+    border: 0;
+    margin-bottom: 2em;
+}
+
+.dim {
+    color: #DDD;
+}
+
+input[type=text], input[type=password] {
+    display: block;
+    width: 100%;
+    font-family: inherit;
+    font-size: 18pt;
+    margin-bottom: 12pt;
+}
+
+input[type=submit] {
+    font-family: inherit;
+    font-size: 18pt;
+    text-align: right;
+    background: #DDD;
+    border: none;
+    padding: 4pt;
+    margin: 4pt 0;
+}
+
+input[type=submit]:hover {
+    background: #CCC;
+    cursor: pointer;
+}
+
+label {
+    font-size: 11pt;
+}

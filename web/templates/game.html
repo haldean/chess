@@ -1,23 +1,7 @@
-<html>
-<head>
-    <title>Chess by TOKD</title>
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,900' rel='stylesheet' type='text/css'>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+{% extends "base.html" %}
+{% block head %}
     <script src="static/chess.js"></script>
     <style>
-    body {
-        font-family: Lato, sans-serif;
-        max-width: 33em;
-        margin: 24pt auto;
-    }
-
-    h1 {
-        font-size: 36pt;
-        margin-bottom: 0;
-    }
-
     #board {
         width: 33em;
         height: 33em;
@@ -37,17 +21,6 @@
         text-align: center;
     }
 
-    hr {
-        height: 1.5em;
-        background-color: #000;
-        border: 0;
-        margin-bottom: 2em;
-    }
-
-    .dim {
-        color: #DDD;
-    }
-
     .black {
         background-color: #CCC;
     }
@@ -56,10 +29,8 @@
         background-color: #FFF;
     }
     </style>
-</head>
-<body>
-<h1>Chess <span class="dim">by TOKD</span></h1>
-<hr />
+{% endblock %}
+{% block body %}
 <table id="board">
     <tr>
         <td id="a8" class="white"></td>
@@ -142,5 +113,4 @@
         <td id="h1" class="white"></td>
     </tr>
 </table>
-</body>
-</html>
+{% endblock %}
