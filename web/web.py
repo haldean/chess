@@ -3,6 +3,7 @@ import engine.store
 import flask
 import json
 import os
+import validate_email
 
 from flask.ext import socketio
 
@@ -13,6 +14,20 @@ sockapp = socketio.SocketIO(app)
 @app.route("/")
 def index():
     return flask.render_template("index.html")
+
+@app.route("/start", methods=["POST"])
+def start():
+    white_email = flask.request.form["white_email"]
+    white_is_valid = validate_email.validate_email(white_email)
+    black_email = flask.request.form["black_email"]
+    black_is_valid = validate_email.validate_email(black_email)
+    if not white_is_valid or not black_is_valid:
+        print "Bad email addresses; %s (%s) %s (%s)" % (
+            white_email, white_is_valid, black_email, black_is_valid)
+        flask.abort(400)
+    game_id, _ = rstore.begin()
+    white_link, black_link = rstore.create_link(game_id)
+    print white_link, black_link
 
 @app.route("/game/<game_link>", methods=["GET", "POST"])
 def game(game_link):
@@ -51,3 +66,4 @@ if __name__ == "__main__":
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
     sockapp.run(app)
+    #app.run(debug=True)

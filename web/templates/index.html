@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+h2 {
+    font-weight: 400;
+    font-size: 30pt;
+    margin: -0.5em 0 0;
+}
+
+p {
+    font-size: 16pt;
+    margin-top: 0.5em;
+}
+
+cite {
+    display: block;
+    margin: .5em 0;
+    font-size: 8pt;
+}
+</style>
+{% endblock %}
+{% block body %}
+<h2>Simple online chess with your friends.</h2>
+<p>
+Getting started is as easy as putting in you and your friend's email addresses
+below. We send both of you unique game links; no logging in required.
+</p>
+<form action="/start" method="POST">
+    <label for="white_email">White's email address:</label>
+    <input type="text" name="white_email">
+    <label for="black_email">Black's email address:</label>
+    <input type="text" name="black_email">
+    <cite>
+    TOKD won't use these email addresses for anything other than announcing
+    chess moves.
+    </cite>
+    <input type="submit" value="Start game">
+</form>
+{% endblock %}

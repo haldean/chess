@@ -2,3 +2,4 @@ redis==2.10.3
 gevent==1.0
 hiredis==0.1.5
 flask-socketio==0.4.0
+validate_email==1.2
