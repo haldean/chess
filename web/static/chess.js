@@ -80,8 +80,13 @@ $(document).ready(function() {
 
     function init_board(b) {
         load_board(b);
+        console.log("loading for player " + player);
         if (player == game.to_play) {
-            $(".piece[data-color='" + player + "']").draggable();
+            $(".piece[data-color='" + player + "']").draggable({
+                delay: 0,
+                distance: 0,
+                containment: "#board",
+            });
             $(".piece[data-color!='" + player + "']").on("dragstart", function(ev) {
                 ev.preventDefault();
             });
@@ -111,6 +116,7 @@ $(document).ready(function() {
         console.log("got connection event, sending join");
         var path = document.location.pathname.split("/");
         socket.emit("join", {link: path[path.length - 1]});
+        console.log("join sent");
     });
     socket.on("reload", function() {
         document.location.reload();
