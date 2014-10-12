@@ -9,7 +9,7 @@ import validate_email
 from flask.ext import socketio
 
 use_debug_server = False
-allow_debug_routes = False
+allow_debug_routes = True
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -88,9 +88,9 @@ def game(game_link):
     color, game_id, game = rstore.game_from_link(game_link)
     access = chess.accessibility_map(game.current_board);
     if game.to_play is None:
-        to_play = "undefined"
+        to_play = "nobody"
     else:
-        to_play = "'%s'" % chess.color_names[game.to_play]
+        to_play = chess.color_names[game.to_play]
     if game.termination is None:
         termination = "undefined"
         termination_msg = None
