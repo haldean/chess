@@ -13,6 +13,8 @@ function rank_from_str(str) {
 }
 
 $(document).ready(function() {
+    console.log("document ready");
+
     var board_elem = document.getElementById("board");
     var current_board = undefined;
     function load_board(b) {
@@ -101,8 +103,12 @@ $(document).ready(function() {
 
     init_board(game.boards[game.boards.length - 1].board);
 
+    console.log("connecting to socket server...");
     var socket = io.connect("http://" + document.domain + ":" + location.port);
+    console.log("connected.");
+
     socket.on("connect", function() {
+        console.log("got connection event, sending join");
         var path = document.location.pathname.split("/");
         socket.emit("join", {link: path[path.length - 1]});
     });
