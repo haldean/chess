@@ -33,3 +33,7 @@ piece_names = {
     queen: "queen",
     king: "king",
 }
+
+white_victory = '1-0'
+black_victory = '0-1'
+stalemate = '1/2-1/2'

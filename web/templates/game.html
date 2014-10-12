@@ -3,7 +3,8 @@
     <script src="/static/chess.js"></script>
     <script>
     var game = {{ game|safe }};
-    var player = "{{ player }}";
+    var player = "{{ player|safe }}";
+    var termination = {{ termination|safe }};
     var accessibility = {{ accessibility|safe }};
     </script>
     <style>
@@ -72,6 +73,13 @@
         float: right;
     }
 
+    #termination {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 1em;
+        font-size: 20pt;
+    }
+
     #to_move {
         width: 100%;
         text-align: center;
@@ -92,11 +100,15 @@
     </style>
 {% endblock %}
 {% block body %}
-<div id="to_move">
-{% if color_name == to_play %}
-You are {{ color_name }}, your move.
+{% if termination_msg %}
+    <div id="termination">{{ termination_msg|safe }}</div>
 {% else %}
-You are {{ color_name }}, {{ to_play }} to move.
+    <div id="to_move">
+    {% if color_name == to_play %}
+    You are {{ color_name }}, your move.
+    {% else %}
+    You are {{ color_name }}, {{ to_play }} to move.
+    {% endif %}
 {% endif %}
 </div>
 <table id="board" cellspacing="0">

@@ -8,7 +8,8 @@ import validate_email
 
 from flask.ext import socketio
 
-use_debug = False
+use_debug_server = False
+allow_debug_routes = False
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -16,6 +17,22 @@ sockapp = socketio.SocketIO(app)
 @app.route("/")
 def index():
     return flask.render_template("index.html")
+
+@app.route("/debug")
+def debug():
+    if not allow_debug_routes:
+        abort(404)
+    return flask.render_template("debug.html")
+
+@app.route("/debug/create_game")
+def debug_create_game():
+    if not allow_debug_routes:
+        abort(404)
+    white_link, black_link = rstore.start_game("", "")
+    white_url = _to_game_url(white_link)
+    black_url = _to_game_url(black_link)
+    return flask.render_template(
+        "debug_create_game.html", white=white_url, black=black_url)
 
 def _to_game_url(link):
     return "%sgame/%s" % (flask.request.url_root, link)
@@ -55,8 +72,11 @@ def _make_move(game_link):
         opponent = chess.white
     player_email, _ = rstore.get_user(game_id, color)
     opponent_email, opponent_link = rstore.get_user(game_id, opponent)
-    emails.send_move_email(
-        opponent_email, _to_game_url(opponent_link), player_email, move_str)
+    # Email addresses aren't set on debug games; don't try to send an email to
+    # an empty address.
+    if player_email and opponent_email:
+        emails.send_move_email(
+            opponent_email, _to_game_url(opponent_link), player_email, move_str)
     # Reload all the other players.
     sockapp.emit("reload", "", room=game_id)
 
@@ -67,10 +87,29 @@ def game(game_link):
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
     access = chess.accessibility_map(game.current_board);
+    if game.to_play is None:
+        to_play = "undefined"
+    else:
+        to_play = "'%s'" % chess.color_names[game.to_play]
+    if game.termination is None:
+        termination = "undefined"
+        termination_msg = None
+    else:
+        termination = "'%s'" % game.termination
+        if color == chess.white and game.termination == chess.white_victory:
+            termination_msg = "Checkmate &mdash; you win!"
+        elif color == chess.black and game.termination == chess.black_victory:
+            termination_msg = "Checkmate &mdash; you win!"
+        elif game.termination == chess.stalemate:
+            termination_msg = "Stalemate."
+        else:
+            termination_msg = "Checkmate &mdash; you lose."
     return flask.render_template(
         "game.html",
         game=json.dumps(game.to_json_dict()),
-        to_play=chess.color_names[game.to_play],
+        to_play=to_play,
+        termination=termination,
+        termination_msg=termination_msg,
         color_name=chess.color_names[color],
         player=color,
         summary=game.summary("\n"),
@@ -90,7 +129,7 @@ def run(api_keys):
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
-    if use_debug:
+    if use_debug_server:
         app.run(debug=True)
     else:
         sockapp.run(app)

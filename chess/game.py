@@ -9,14 +9,15 @@ class InvalidMoveError(Exception):
     pass
 
 class Game(object):
-    def __init__(self, boards, moves, to_play):
+    def __init__(self, boards, moves, to_play, termination):
         self.boards = boards
         self.moves = moves
         self.to_play = to_play
+        self.termination = termination
 
     @classmethod
     def new(cls):
-        return Game([board.Board.new()], [], white)
+        return Game([board.Board.new()], [], white, None)
 
     @property
     def current_board(self):
@@ -45,6 +46,12 @@ class Game(object):
             self.to_play = black
         else:
             self.to_play = white
+        if move.in_checkmate(self.current_board, self.to_play):
+            if self.to_play == white:
+                self.termination = white_victory
+            else:
+                self.termination = black_victory
+            self.to_play = None
 
     def summary(self, sep=" "):
         pairs = [self.moves[i:i+2] for i in range(0, len(self.moves), 2)]
@@ -55,6 +62,8 @@ class Game(object):
             else:
                 pair_strs.append("%d.%s %s" % (
                     i + 1, pair[0].algebraic, pair[1].algebraic))
+        if self.termination:
+            pair_strs.append(self.termination)
         return sep.join(pair_strs)
 
     def __str__(self):
@@ -63,9 +72,10 @@ class Game(object):
 
     def to_json_dict(self):
         return {
-            "boards":  [b.to_json_dict() for b in self.boards],
-            "moves":   [m.to_json_dict() for m in self.moves],
+            "boards": [b.to_json_dict() for b in self.boards],
+            "moves": [m.to_json_dict() for m in self.moves],
             "to_play": self.to_play,
+            "termination": self.termination,
         }
 
     @classmethod
@@ -73,4 +83,8 @@ class Game(object):
         boards = [board.Board.from_json_dict(b) for b in jobj["boards"]]
         moves = [move.Move.from_json_dict(m) for m in jobj["moves"]]
         to_play = jobj["to_play"]
-        return cls(boards, moves, to_play)
+        if "termination" in jobj:
+            termination = jobj["termination"]
+        else:
+            termination = None
+        return cls(boards, moves, to_play, termination)
