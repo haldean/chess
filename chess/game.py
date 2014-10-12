@@ -67,6 +67,9 @@ class Game(object):
         return sep.join(pair_strs)
 
     def __str__(self):
+        if self.termination:
+            return "Game with %d moves, end in %s" % (
+                len(self.moves), self.termination)
         return "Game with %d moves, %s to play" % (
             len(self.moves), color_names[self.to_play])
 

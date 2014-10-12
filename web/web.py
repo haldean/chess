@@ -9,7 +9,7 @@ import validate_email
 from flask.ext import socketio
 
 use_debug_server = False
-allow_debug_routes = True
+allow_debug_routes = False
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -22,7 +22,7 @@ def index():
 def debug():
     if not allow_debug_routes:
         abort(404)
-    return flask.render_template("debug.html")
+    return flask.render_template("debug.html", games=rstore.all_games())
 
 @app.route("/debug/create_game")
 def debug_create_game():
@@ -87,6 +87,7 @@ def game(game_link):
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
     access = chess.accessibility_map(game.current_board);
+    opponent, _ = rstore.get_user(game_id, chess.opposite_color(color))
     if game.to_play is None:
         to_play = "nobody"
     else:
@@ -113,7 +114,9 @@ def game(game_link):
         color_name=chess.color_names[color],
         player=color,
         summary=game.summary("\n"),
-        accessibility=json.dumps(access))
+        accessibility=json.dumps(access),
+        opponent=opponent,
+        )
 
 @sockapp.on("join")
 def on_join(data):

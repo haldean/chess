@@ -1,5 +1,47 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+table {
+    margin: 1em 0;
+}
+
+td {
+    border-right: 1px solid #EEE;
+    padding: 8pt;
+    margin: 0;
+}
+
+th {
+    background: #EEE;
+    font-weight: normal;
+    padding: 8pt;
+}
+</style>
+{% endblock %}
 {% block body %}
 <h2>The ol' debuggin stuff.</h2>
+<table cellpadding=0 cellspacing=0>
+<th></th><th>Game</th> <th>White</th> <th>Black</th></th>
+{% for g in games %}
+<tr>
+    <td>{{ g["game_id"] }}</td>
+    <td>{{ g["game"] }}</td>
+    <td><a href="/game/{{ g["white_link"] }}">
+        {% if g["white_email"] %}
+            {{ g["white_email"] }}
+        {% else %}
+            None
+        {% endif %}
+    </a></td>
+    <td><a href="/game/{{ g["black_link"] }}">
+        {% if g["black_email"] %}
+            {{ g["black_email"] }}
+        {% else %}
+            None
+        {% endif %}
+    </a></td>
+</tr>
+{% endfor %}
+</table>
 <button class="confirm" onclick="window.location = '/debug/create_game';">Create new game</button>
 {% endblock %}

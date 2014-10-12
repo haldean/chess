@@ -35,8 +35,24 @@ class RedisStore(object):
         return id, game
 
     def get(self, id):
-        game_str = self.rconn.get(_REDIS_PREFIX + "chess:games:%d:game" % id)
+        game_str = self.rconn.get(_REDIS_PREFIX + "chess:games:%s:game" % id)
         return chess.Game.from_json_dict(json.loads(game_str))
+
+    def all_games(self):
+        # Warning: expensive!
+        keys = self.rconn.keys(_REDIS_PREFIX + "chess:games:*:game")
+        game_ids = sorted([k.split(':')[-2] for k in keys])
+        games = []
+        for game_id in game_ids:
+            game = self.get(game_id)
+            white_email, white_link = self.get_user(game_id, chess.white)
+            black_email, black_link = self.get_user(game_id, chess.black)
+            games.append(dict(
+                game_id=game_id, game=game,
+                white_email=white_email, white_link=white_link,
+                black_email=black_email, black_link=black_link,
+            ))
+        return games
 
     def game_from_link(self, link):
         color, game_id = json.loads(self.rconn.get(
@@ -56,25 +72,25 @@ class RedisStore(object):
             json.dumps((chess.black, game_id)))
         # Create game-to-email mapping
         self.rconn.set(
-            _REDIS_PREFIX + "chess:games:%d:%s:email" % (game_id, chess.white),
+            _REDIS_PREFIX + "chess:games:%s:%s:email" % (game_id, chess.white),
             white_email)
         self.rconn.set(
-            _REDIS_PREFIX + "chess:games:%d:%s:email" % (game_id, chess.black),
+            _REDIS_PREFIX + "chess:games:%s:%s:email" % (game_id, chess.black),
             black_email)
         # Create game-to-link mapping
         self.rconn.set(
-            _REDIS_PREFIX + "chess:games:%d:%s:link" % (game_id, chess.white),
+            _REDIS_PREFIX + "chess:games:%s:%s:link" % (game_id, chess.white),
             white_link)
         self.rconn.set(
-            _REDIS_PREFIX + "chess:games:%d:%s:link" % (game_id, chess.black),
+            _REDIS_PREFIX + "chess:games:%s:%s:link" % (game_id, chess.black),
             black_link)
         return white_link, black_link
 
     def get_user(self, game_id, color):
         email_addr = self.rconn.get(
-            _REDIS_PREFIX + "chess:games:%d:%s:email" % (game_id, color))
+            _REDIS_PREFIX + "chess:games:%s:%s:email" % (game_id, color))
         link = self.rconn.get(
-            _REDIS_PREFIX + "chess:games:%d:%s:link" % (game_id, color))
+            _REDIS_PREFIX + "chess:games:%s:%s:link" % (game_id, color))
         return email_addr, link
 
     def move(self, id, move):
@@ -84,5 +100,5 @@ class RedisStore(object):
 
     def _set_game(self, game_id, game):
         self.rconn.set(
-            _REDIS_PREFIX + "chess:games:%d:game" % game_id,
+            _REDIS_PREFIX + "chess:games:%s:game" % game_id,
             json.dumps(game.to_json_dict()))

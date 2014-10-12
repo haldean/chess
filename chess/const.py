@@ -37,3 +37,10 @@ piece_names = {
 white_victory = '1-0'
 black_victory = '0-1'
 stalemate = '1/2-1/2'
+
+def opposite_color(color):
+    if color == white:
+        return black
+    if color == black:
+        return white
+    raise ValueError("Invalid color '%s'" % color)
