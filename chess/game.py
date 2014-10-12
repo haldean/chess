@@ -47,7 +47,7 @@ class Game(object):
         else:
             self.to_play = white
         if move.in_checkmate(self.current_board, self.to_play):
-            if self.to_play == white:
+            if self.to_play == black:
                 self.termination = white_victory
             else:
                 self.termination = black_victory
