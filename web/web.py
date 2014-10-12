@@ -1,4 +1,5 @@
 import chess
+import emails
 import engine.store
 import flask
 import json
@@ -15,6 +16,9 @@ sockapp = socketio.SocketIO(app)
 def index():
     return flask.render_template("index.html")
 
+def _to_game_url(link):
+    return "%sgame/%s" % (flask.request.url_root, link)
+
 @app.route("/start", methods=["POST"])
 def start():
     white_email = flask.request.form["white_email"]
@@ -25,22 +29,40 @@ def start():
         print "Bad email addresses; %s (%s) %s (%s)" % (
             white_email, white_is_valid, black_email, black_is_valid)
         flask.abort(400)
-    game_id, _ = rstore.begin()
-    white_link, black_link = rstore.create_link(game_id)
-    print white_link, black_link
+    white_link, black_link = rstore.start_game(white_email, black_email)
+    white_url = _to_game_url(white_link)
+    black_url = _to_game_url(black_link)
+    emails.send_welcome(white_email, white_url, black_email)
+    emails.send_welcome(black_email, black_url, white_email)
+    return flask.redirect(flask.url_for("getready"))
+
+@app.route("/getready")
+def getready():
+    return flask.render_template("post_start.html")
+
+def _make_move(game_link):
+    color, game_id, game = rstore.game_from_link(game_link)
+    if color != game.to_play:
+        flask.abort(403)
+    move_str = flask.request.form["move"]
+    move = chess.parse_algebraic(
+        game.current_board, color, move_str)
+    rstore.move(game_id, move)
+    if color == chess.white:
+        opponent = chess.black
+    else:
+        opponent = chess.white
+    player_email, _ = rstore.get_user(game_id, color)
+    opponent_email, opponent_link = rstore.get_user(game_id, opponent)
+    emails.send_move_email(
+        opponent_email, _to_game_url(opponent_link), player_email, move_str)
+    # Reload all the other players.
+    sockapp.emit("reload", "", room=game_id)
 
 @app.route("/game/<game_link>", methods=["GET", "POST"])
 def game(game_link):
     if flask.request.method == "POST":
-        color, game_id, game = rstore.game_from_link(game_link)
-        if color != game.to_play:
-            flask.abort(403)
-        move_str = flask.request.form["move"]
-        move = chess.parse_algebraic(
-            game.current_board, color, move_str)
-        rstore.move(game_id, move)
-        # Reload all the other players.
-        sockapp.emit("reload", "", room=game_id)
+        _make_move(game_link)
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
     access = chess.accessibility_map(game.current_board);
@@ -61,7 +83,9 @@ def on_join(data):
     _, game_id, _ = rstore.game_from_link(link)
     socketio.join_room(game_id)
 
-if __name__ == "__main__":
+def run(api_keys):
+    app.secret_key = api_keys.flask_session_key
+    emails.set_mailgun_key(api_keys.mailgun_key)
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))

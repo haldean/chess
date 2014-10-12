@@ -14,6 +14,23 @@ h1 {
     margin-bottom: 0;
 }
 
+h2 {
+    font-weight: 400;
+    font-size: 30pt;
+    margin: -0.5em 0 0;
+}
+
+p {
+    font-size: 16pt;
+    margin-top: 0.5em;
+}
+
+cite {
+    display: block;
+    margin: .5em 0;
+    font-size: 8pt;
+}
+
 hr {
     height: 1.5em;
     background-color: #000;

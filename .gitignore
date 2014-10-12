@@ -52,3 +52,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Don't check in credentials.
+api_keys.py
