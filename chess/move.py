@@ -181,9 +181,11 @@ def in_check(b, color, position=None):
     If no position is given, the location of the king is pulled from the board.
     """
     board_positions = list(b.find(board.Piece(color, king)))
-    if len(board_positions) != 1:
+    if len(board_positions) > 1:
         raise Exception("Board has %d %s kings" % (
             len(board_positions), color))
+    elif not board_positions:
+        return False
     board_position = board_positions[0]
     if position is None:
         position = board_position
@@ -201,8 +203,10 @@ def in_check(b, color, position=None):
 
 def in_checkmate(b, color):
     positions = list(b.find(board.Piece(color, king)))
-    if len(positions) != 1:
+    if len(positions) > 1:
         raise Exception("Board has %d %s kings" % (len(positions), color))
+    elif not positions:
+        return False
     position = positions[0]
     # See if the king can escape on his own
     for d_rank in (-1, 0, 1):
@@ -391,6 +395,15 @@ def _queen_move_is_valid(start, end):
     return _bishop_move_is_valid(start, end) or _rook_move_is_valid(start, end)
 
 def _move_is_valid(b, start, end):
+    if not _movement_is_valid(b, start, end):
+        return False
+    color = b[start].color
+    post_move = b.apply(Move(start, end, "test-check-move", None))
+    if in_check(post_move, color):
+        return False
+    return True
+
+def _movement_is_valid(b, start, end):
     if not 0 <= start[0] <= 7 or not 0 <= start[1] <= 7:
         return False
     if not 0 <= end[0] <= 7 or not 0 <= end[1] <= 7:

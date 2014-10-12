@@ -52,7 +52,7 @@ $(document).ready(function() {
             }
         }
         if (!good) {
-            load_board(current_board);
+            init_board(current_board);
             return;
         }
         // Make a copy of the old board.

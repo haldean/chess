@@ -8,6 +8,7 @@ import validate_email
 
 from flask.ext import socketio
 
+use_debug = False
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -89,5 +90,7 @@ def run(api_keys):
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
-    sockapp.run(app)
-    #app.run(debug=True)
+    if use_debug:
+        app.run(debug=True)
+    else:
+        sockapp.run(app)
