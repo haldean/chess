@@ -15,6 +15,10 @@
         padding: 32pt;
         border-radius: 8pt;
     }
+
+    cite {
+        font-size: 20pt;
+    }
 }
 @media only screen and (min-width: 1200px) {
     body {
@@ -34,6 +38,11 @@
         font-size: 12pt;
         padding: 6pt 12pt;
         border-radius: 4pt;
+    }
+
+    cite {
+        font-size: 8pt;
+        margin: .5em 0;
     }
 }
 
@@ -65,8 +74,6 @@ p {
 
 cite {
     display: block;
-    margin: .5em 0;
-    font-size: 8pt;
 }
 
 .dim {

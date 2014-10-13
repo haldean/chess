@@ -219,16 +219,20 @@
 {% endblock %}
 {% block body %}
 {% if termination_msg %}
-    <div id="termination">{{ termination_msg|safe }}</div>
+    <div id="termination">
+        {{ termination_msg|safe }}
+        <cite>Playing against {{ opponent }}</cite>
+    </div>
 {% else %}
     <div id="to_move">
-    {% if color_name == to_play %}
-    You are {{ color_name }}, your move.
-    {% else %}
-    You are {{ color_name }}, {{ to_play }} to move.
-    {% endif %}
+        {% if color_name == to_play %}
+        You are {{ color_name }}, your move.
+        {% else %}
+        You are {{ color_name }}, {{ to_play }} to move.
+        {% endif %}
+        <cite>Playing against {{ opponent }}</cite>
+    </div>
 {% endif %}
-</div>
 <table id="board" cellspacing="0">
     <tr>
         <td id="a8" class="white"></td>
@@ -313,7 +317,6 @@
 </table>
 <div id="summary">
 <pre>{{ summary }}</pre>
-<cite>Playing against {{ opponent }}</cite>
 <a href="#" id="stats_toggle">Toggle stats</a>
 </div>
 <div id="stats">
