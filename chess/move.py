@@ -27,6 +27,10 @@ def rank_from_str(rank):
     return int(rank) - 1
 
 
+def loc_from_str(loc_str):
+    return rank_from_str(loc_str[1]), file_from_str(loc_str[0])
+
+
 class Move(object):
     def __init__(self, start, end, algebraic, castle):
         self.start = start
@@ -158,6 +162,8 @@ def is_castle(b, start, end):
         rank = 0
     else:
         rank = 7
+    if start[1] != 4:
+        return False
     if start[0] != rank or end[0] != rank:
         return False
     if end[1] == 6:
@@ -199,6 +205,19 @@ def in_check(b, color, position=None):
         if _move_is_valid(b, (rank, file), position):
             return True
     return False
+
+
+def in_stalemate(b, to_play):
+    if in_checkmate(b, to_play):
+        return False
+    for rank, file, p in b:
+        if p.color != to_play:
+            continue
+        for r in range(8):
+            for f in range(8):
+                if _move_is_valid(b, (rank, file), (r, f)):
+                    return False
+    return True
 
 
 def in_checkmate(b, color):

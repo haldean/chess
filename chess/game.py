@@ -52,6 +52,9 @@ class Game(object):
             else:
                 self.termination = black_victory
             self.to_play = None
+        elif move.in_stalemate(self.current_board, self.to_play):
+            self.termination = stalemate
+            self.to_play = None
 
     def summary(self, sep=" "):
         pairs = [self.moves[i:i+2] for i in range(0, len(self.moves), 2)]

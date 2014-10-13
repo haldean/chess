@@ -1,9 +1,11 @@
 import chess
+import eco
 import emails
 import engine.store
 import flask
 import json
 import os
+import stats
 import validate_email
 
 from flask.ext import socketio
@@ -13,6 +15,7 @@ allow_debug_routes = False
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
+eco_data = eco.load_default()
 
 @app.route("/")
 def index():
@@ -105,6 +108,7 @@ def game(game_link):
             termination_msg = "Stalemate."
         else:
             termination_msg = "Checkmate &mdash; you lose."
+    opening, possible_openings = stats.opening_stats(game, eco_data)
     return flask.render_template(
         "game.html",
         game=json.dumps(game.to_json_dict()),
@@ -116,6 +120,8 @@ def game(game_link):
         summary=game.summary("\n"),
         accessibility=json.dumps(access),
         opponent=opponent,
+        opening=opening,
+        possible_openings=possible_openings,
         )
 
 @sockapp.on("join")

@@ -197,6 +197,48 @@ class RulesTest(unittest.TestCase):
         b = chess.Board.parse(board)
         self.assertFalse(chess.in_checkmate(b, chess.black))
 
+    def testStalemate(self):
+        '''
+        board = """
+        __ __ __ bK __ __ __ __
+        __ __ __ wQ __ __ __ __
+        __ __ __ __ __ __ __ __
+        wB __ __ wp __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ __ __ __
+        """
+        b = chess.Board.parse(board)
+        self.assertFalse(chess.in_stalemate(b, chess.black))
+
+        board = """
+        __ __ __ bK __ __ __ __
+        __ __ __ wQ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wp __ __ __ __
+        wB __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ __ __ __
+        """
+        b = chess.Board.parse(board)
+        self.assertFalse(chess.in_stalemate(b, chess.black))
+        '''
+
+        board = """
+        bK __ __ __ __ __ __ __
+        __ __ wR __ __ __ __ __
+        __ wR __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ __ __ __
+        """
+        b = chess.Board.parse(board)
+        self.assertTrue(chess.in_stalemate(b, chess.black))
+
 
 if __name__ == '__main__':
     unittest.main()

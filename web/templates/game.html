@@ -97,6 +97,25 @@
         height: 31em;
         margin-top: 0;
     }
+
+    #stats {
+        background: #F9F9F9;
+        padding: 1em 8pt;
+        margin-bottom: 2em;
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 10pt;
+    }
+
+    #stats ol {
+        margin: 4pt;
+    }
+
+    .stat {
+        font-size: 14pt;
+        margin-bottom: .5em;
+    }
     </style>
 {% endblock %}
 {% block body %}
@@ -196,6 +215,22 @@
 <div id="summary">
 <pre>{{ summary }}</pre>
 <cite>Playing against {{ opponent }}</cite>
+</div>
+<div id="stats">
+{% if opening %}
+You opened with:
+<div class="stat"><b>{{ opening.code }}</b> {{ opening.name }}</div>
+{% else %}
+No ECO opening has been played.
+{% endif %}
+{% if possible_openings %}
+Possible openings from here:
+<ol>
+{% for o in possible_openings %}
+<li><b>{{ o.code }}</b> {{ o.name }}: {{ o.next_move }}</li>
+{% endfor %}
+</ol>
+{% endif %}
 </div>
 <div id="popup">
     <div id="alert">
