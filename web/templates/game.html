@@ -8,20 +8,130 @@
     var accessibility = {{ accessibility|safe }};
     </script>
     <style>
+    @media only screen and (min-width: 320px) {
+        #board {
+            width: 100%;
+        }
+        #board tr {
+            height: 4em;
+        }
+        #board td {
+            width: 12%;
+        }
+        #summary {
+            width: 100%;
+        }
+        #termination {
+            font-size: 30pt;
+        }
+        #to_move {
+            font-size: 44pt;
+        }
+        #summary {
+            font-size: 22pt;
+            width: 50%;
+        }
+        #stats {
+            font-size: 20pt;
+            width: 50%;
+        }
+        .stat {
+            font-size: 24pt;
+        }
+        .stat small {
+            font-size: 20pt;
+        }
+        #stats_toggle {
+            font-size: 19pt;
+        }
+        #alert {
+            width: 90%;
+            margin: 15% auto;
+            background: #FFF;
+            border-radius: 5pt;
+            padding: 30pt 15pt;
+            text-align: center;
+        }
+        #alert_text {
+            font-weight: bold;
+            font-size: 48pt;
+            text-align: center;
+        }
+        #alert button {
+            margin: 16pt;
+        }
+    }
+    @media only screen and (min-width: 1200px) {
+        #board {
+            width: 33em;
+            height: 33em;
+        }
+        #board tr {
+            height: 4em;
+        }
+        #board td {
+            width: 4em;
+        }
+        #summary {
+            width: 11em;
+            height: 33em;
+        }
+        #stats {
+            margin-bottom: 2em;
+            width: 100%;
+            font-size: 10pt;
+        }
+        #termination {
+            font-size: 20pt;
+        }
+        #to_move {
+            font-size: 14pt;
+        }
+        #summary {
+            font-size: 12pt;
+        }
+        .stat {
+            font-size: 14pt;
+        }
+        .stat small {
+            font-size: 10pt;
+        }
+        #stats_toggle {
+            font-size: 9pt;
+        }
+        #alert {
+            width: 26em;
+            height: 30pt;
+            margin: 15% auto;
+            background: #FFF;
+            border-radius: 5pt;
+            padding: 10pt 15pt;
+            display: table;
+            overflow: hidden;
+        }
+        #alert_text {
+            display: table-cell;
+            vertical-align: middle;
+            font-weight: bold;
+            font-size: 18pt;
+            text-align: left;
+        }
+        #alert button {
+            float: right;
+            margin: 4pt;
+        }
+    }
+
     #board {
-        width: 33em;
-        height: 33em;
         border: 0.5em solid #000;
         padding: 0;
         float: left;
     }
     #board tr {
-        height: 4em;
         padding: 0;
         margin: 0;
     }
     #board td {
-        width: 4em;
         padding: 0;
         margin: 0;
         vertical-align: center;
@@ -46,9 +156,6 @@
         border: 4pt solid #999;
     }
 
-    .selected {
-    }
-
     img {
         width: 90%;
         height: 90%;
@@ -64,61 +171,32 @@
         display: none;
     }
 
-    #alert {
-        width: 26em;
-        height: 30pt;
-        margin: 15% auto;
-        background: #FFF;
-        border-radius: 5pt;
-        padding: 10pt 15pt;
-        display: table;
-        overflow: hidden;
-    }
-
-    #alert_text {
-        display: table-cell;
-        vertical-align: middle;
-        font-weight: bold;
-        font-size: 18pt;
-    }
-
-    #alert button {
-        float: right;
-    }
-
     #termination {
         width: 100%;
         text-align: center;
         margin-bottom: 1em;
-        font-size: 20pt;
     }
 
     #to_move {
         width: 100%;
         text-align: center;
         margin-bottom: 2em;
-        font-size: 14pt;
     }
 
     #summary {
-        font-size: 12pt;
         float: left;
         padding: 1em 1em;
         color: #999;
         background: #EEE;
-        width: 9em;
-        height: 31em;
         margin-top: 0;
+        box-sizing: border-box;
     }
 
     #stats {
         background: #F9F9F9;
         padding: 1em 8pt;
-        margin-bottom: 2em;
         float: left;
-        width: 100%;
         box-sizing: border-box;
-        font-size: 10pt;
     }
 
     #stats ol {
@@ -126,17 +204,14 @@
     }
 
     .stat {
-        font-size: 14pt;
         margin-bottom: .5em;
     }
 
     .stat small {
-        font-size: 10pt;
         display: block;
     }
 
     #stats_toggle {
-        font-size: 9pt;
         color: #999;
         text-transform: lowercase;
     }

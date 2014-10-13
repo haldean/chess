@@ -138,6 +138,6 @@ def run(api_keys):
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
     if use_debug_server:
-        app.run(debug=True)
+        app.run(host="0.0.0.0", debug=True)
     else:
-        sockapp.run(app)
+        sockapp.run(app, host="0.0.0.0")

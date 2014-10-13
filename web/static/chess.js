@@ -15,7 +15,19 @@ function rank_from_str(str) {
 $(document).ready(function() {
     console.log("document ready");
 
-    var board_elem = document.getElementById("board");
+    // Initialize layout.
+    var board_elem = $("#board");
+    board_elem.height(board_elem.width());
+    if (window.innerWidth < 1200) {
+        var stats_elem = $("#stats");
+        var summary_elem = $("#summary");
+        if (stats_elem.height() > summary_elem.height()) {
+            summary_elem.height(stats_elem.height());
+        } else if (stats_elem.height() < summary_elem.height()) {
+            stats_elem.height(summary_elem.height());
+        }
+    }
+
     var current_board = undefined;
     function load_board(b) {
         for (var r = 0; r < 8; r++) {
@@ -52,6 +64,7 @@ $(document).ready(function() {
     }
 
     function do_move(r, f, new_r, new_f) {
+        console.log("do move", r, f, new_r, new_f);
         var start_loc = loc_str(r, f);
         var good = false;
         var move_name = is_accessible(new_r, new_f, start_loc);
@@ -100,8 +113,12 @@ $(document).ready(function() {
                 if (is_accessible(r, f, start_loc)) {
                     var square_elem = $("#" + loc_str(r, f));
                     square_elem.addClass("selected");
-                    square_elem.click(function(ev) {
+                    square_elem.unbind("click").click(function(ev) {
                         reset_move();
+                        if ($(ev.target).hasClass("piece")) {
+                            ev.target = $(ev.target).parent()[0];
+                        }
+                        console.log("target", ev.target);
                         var new_r = rank_from_str(ev.target.id);
                         var new_f = file_from_str(ev.target.id);
                         do_move(last_move_rank, last_move_file, new_r, new_f);

@@ -1,7 +1,44 @@
+@media only screen and (min-width: 320px) {
+    body {
+        font-size: 14pt;
+        margin: 2em;
+    }
+
+    hr {
+        height: 1.5em;
+        background-color: #FFF;
+        border: 0;
+    }
+
+    button {
+        font-size: 36pt;
+        padding: 32pt;
+        border-radius: 8pt;
+    }
+}
+@media only screen and (min-width: 1200px) {
+    body {
+        max-width: 44em;
+        margin: 24pt auto;
+        font-size: 12pt;
+    }
+
+    hr {
+        height: 1.5em;
+        background-color: #000;
+        border: 0;
+        margin-bottom: 2em;
+    }
+
+    button {
+        font-size: 12pt;
+        padding: 6pt 12pt;
+        border-radius: 4pt;
+    }
+}
+
 body {
     font-family: Lato, sans-serif;
-    max-width: 44em;
-    margin: 24pt auto;
 }
 
 pre {
@@ -30,13 +67,6 @@ cite {
     display: block;
     margin: .5em 0;
     font-size: 8pt;
-}
-
-hr {
-    height: 1.5em;
-    background-color: #000;
-    border: 0;
-    margin-bottom: 2em;
 }
 
 .dim {
@@ -74,9 +104,6 @@ button {
     border: none;
     font-family: inherit;
     font-weight: bold;
-    font-size: 12pt;
-    padding: 6pt 12pt;
-    border-radius: 4pt;
 }
 
 button.confirm {
