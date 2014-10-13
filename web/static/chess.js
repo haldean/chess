@@ -90,7 +90,9 @@ $(document).ready(function() {
             $(".piece[data-color!='" + player + "']").on("dragstart", function(ev) {
                 ev.preventDefault();
             });
-            document.title = "(!!) " + document.title;
+            if (document.title.substring(0, 4) != "(!!)") {
+                document.title = "(!!) " + document.title;
+            }
         } else {
             prevent_drag();
         }
