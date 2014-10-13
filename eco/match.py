@@ -7,13 +7,6 @@ def game_to_eco_moves(game):
         eco_moves.append(eco_move)
     return eco_moves
 
-def eco_to_move(board, eco_move):
-    loc1 = eco_move[:2]
-    loc2 = eco_move[2:]
-    start = chess.loc_from_str(loc1)
-    end = chess.loc_from_str(loc2)
-    return chess.Move.on_board(start, end, board)
-
 def is_exact_match(game, eco_move):
     game_moves = game_to_eco_moves(game)
     if len(game_moves) < len(eco_move.moves):

@@ -2,10 +2,11 @@ import functools
 
 @functools.total_ordering
 class Opening(object):
-    def __init__(self, code, name, moves):
+    def __init__(self, code, name, moves, summary):
         self.code = code
         self.name = name
         self.moves = moves
+        self.summary = summary
 
     def __lt__(self, other):
         return len(self.moves) < len(other.moves)

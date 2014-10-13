@@ -139,7 +139,8 @@ $(document).ready(function() {
             window.localStorage["show_stats"] = "false";
         }
     }
-    stat_link.click(function() {
+    stat_link.click(function(ev) {
+        ev.preventDefault();
         if (stat_div.css("display") == "none") {
             set_stats_visibility(true);
         } else {

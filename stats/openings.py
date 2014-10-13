@@ -2,8 +2,8 @@ import chess
 import eco
 
 class PossibleOpening(eco.Opening):
-    def __init__(self, code, name, moves, next_move):
-        eco.Opening.__init__(self, code, name, moves)
+    def __init__(self, code, name, moves, summary, next_move):
+        eco.Opening.__init__(self, code, name, summary, moves)
         self.next_move = next_move
 
     @classmethod
@@ -16,7 +16,8 @@ class PossibleOpening(eco.Opening):
         else:
             next_algebraic = "...%s" % next_move.algebraic
         return cls(
-            opening.code, opening.name, opening.moves, next_algebraic)
+            opening.code, opening.name, opening.moves, opening.summary,
+            next_algebraic)
 
 def opening_stats(game, eco_data):
     if not game.moves:

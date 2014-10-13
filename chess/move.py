@@ -256,6 +256,9 @@ def in_checkmate(b, color):
             continue
         if cap.color == color:
             return False
+    if threat.piece == knight:
+        # Can't block a knight, sucker.
+        return True
     # See if pieces can move between the threatening piece and the king
     def is_blockable(rank, file):
         for _, _, blocker in pieces_with_access(b, (rank, file)):
