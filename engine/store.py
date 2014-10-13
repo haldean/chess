@@ -1,5 +1,7 @@
+import base64
 import chess
 import json
+import os
 import redis
 import uuid
 
@@ -59,10 +61,17 @@ class RedisStore(object):
             _REDIS_PREFIX + "chess:links:%s" % link))
         return color, game_id, self.get(game_id)
 
+    def _pick_link(self):
+        link = None
+        while True:
+            link = base64.b32encode(os.urandom(5)).lower()
+            if not self.rconn.exists(_REDIS_PREFIX + "chess:links:%s" % link):
+                return link
+
     def start_game(self, white_email, black_email):
         game_id, _ = self.begin()
-        white_link = uuid.uuid4()
-        black_link = uuid.uuid4()
+        white_link = self._pick_link()
+        black_link = self._pick_link()
         # Create link-to-game mapping
         self.rconn.set(
             _REDIS_PREFIX + "chess:links:%s" % white_link,
