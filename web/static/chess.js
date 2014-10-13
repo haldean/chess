@@ -41,19 +41,21 @@ $(document).ready(function() {
         });
     }
 
+    function is_accessible(r, f, start_loc) {
+        for (var i = 0; i < accessibility[r][f].length; i++) {
+            var access = accessibility[r][f][i];
+            if (access.start == start_loc) {
+                return access.name;
+            }
+        }
+        return undefined;
+    }
+
     function do_move(r, f, new_r, new_f) {
         var start_loc = loc_str(r, f);
         var good = false;
-        var move_name = undefined;
-        for (var i = 0; i < accessibility[new_r][new_f].length; i++) {
-            access = accessibility[new_r][new_f][i];
-            if (access.start == start_loc) {
-                good = true;
-                move_name = access.name;
-                break;
-            }
-        }
-        if (!good) {
+        var move_name = is_accessible(new_r, new_f, start_loc);
+        if (!move_name) {
             init_board(current_board);
             return;
         }
@@ -65,6 +67,7 @@ $(document).ready(function() {
         current_board[new_r * 8 + new_f] = current_board[r * 8 + f];
         current_board[r * 8 + f] = "";
         load_board(current_board);
+        $("#alert *").unbind("click");
         $("#alert_move").text(move_name);
         $("#alert button.confirm").click(function() {
             $.post(window.location.pathname,
@@ -78,14 +81,55 @@ $(document).ready(function() {
         prevent_drag();
     }
 
+    var last_move_start = undefined;
+    var last_move_rank = undefined;
+    var last_move_file = undefined;
+
+    function start_move(start_elem) {
+        reset_move();
+        if (start_elem === last_move_start) {
+            last_move_start = undefined;
+            return;
+        }
+        last_move_start = start_elem;
+        last_move_rank = start_elem.data().rank;
+        last_move_file = start_elem.data().file;
+        var start_loc = loc_str(last_move_rank, last_move_file);
+        for (var r = 0; r < 8; r++) {
+            for (var f = 0; f < 8; f++) {
+                if (is_accessible(r, f, start_loc)) {
+                    var square_elem = $("#" + loc_str(r, f));
+                    square_elem.addClass("selected");
+                    square_elem.click(function(ev) {
+                        reset_move();
+                        var new_r = rank_from_str(ev.target.id);
+                        var new_f = file_from_str(ev.target.id);
+                        do_move(last_move_rank, last_move_file, new_r, new_f);
+                    });
+                }
+            }
+        }
+    }
+
+    function reset_move() {
+        $(".selected").removeClass("selected");
+        $("#board td").unbind("click").click(function() {
+            reset_move();
+        });
+    }
+
     function init_board(b) {
         load_board(b);
         console.log("loading for player " + player);
+        $(".piece").unbind("click");
         if (player == game.to_play) {
             $(".piece[data-color='" + player + "']").draggable({
                 delay: 0,
-                distance: 0,
+                distance: 1,
                 containment: "#board",
+            }).click(function(ev) {
+                ev.stopPropagation();
+                start_move($(ev.target));
             });
             $(".piece[data-color!='" + player + "']").on("dragstart", function(ev) {
                 ev.preventDefault();

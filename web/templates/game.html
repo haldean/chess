@@ -28,12 +28,25 @@
         text-align: center;
     }
 
+    #board * {
+        box-sizing: border-box;
+    }
+
     .black {
         background-color: #CCC;
+    }
+    .black.selected {
+        border: 4pt solid #555;
     }
 
     .white {
         background-color: #FFF;
+    }
+    .white.selected {
+        border: 4pt solid #999;
+    }
+
+    .selected {
     }
 
     img {
