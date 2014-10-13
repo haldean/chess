@@ -116,6 +116,12 @@
         font-size: 14pt;
         margin-bottom: .5em;
     }
+
+    #stats_toggle {
+        font-size: 9pt;
+        color: #999;
+        text-transform: lowercase;
+    }
     </style>
 {% endblock %}
 {% block body %}
@@ -215,21 +221,35 @@
 <div id="summary">
 <pre>{{ summary }}</pre>
 <cite>Playing against {{ opponent }}</cite>
+<a href="#" id="stats_toggle">Toggle stats</a>
 </div>
 <div id="stats">
-{% if opening %}
+
+Material advantage:
+<div class="stat">
+{% if stats.material_advantage %}
+{{ stats.material_advantage|title }} has a material advantage of
+{{ stats.material_difference }}p.
+{% else %}
+No material advantage.
+{% endif %}
+</div>
+
+{% if stats.opening %}
 You opened with:
-<div class="stat"><b>{{ opening.code }}</b> {{ opening.name }}</div>
+<div class="stat"><b>{{ stats.opening.code }}</b> {{ stats.opening.name }}</div>
 {% else %}
 No ECO opening has been played.
 {% endif %}
-{% if possible_openings %}
+
+{% if stats.possible_openings %}
 Possible openings from here:
 <ol>
-{% for o in possible_openings %}
+{% for o in stats.possible_openings %}
 <li><b>{{ o.code }}</b> {{ o.name }}: {{ o.next_move }}</li>
 {% endfor %}
 </ol>
+
 {% endif %}
 </div>
 <div id="popup">

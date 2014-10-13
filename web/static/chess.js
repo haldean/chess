@@ -124,4 +124,27 @@ $(document).ready(function() {
     socket.on("reload", function() {
         document.location.reload();
     });
+
+    // Set up stats div toggler.
+    var stat_div = $("#stats")
+    var stat_link = $("#stats_toggle")
+    function set_stats_visibility(visible) {
+        if (visible) {
+            stat_div.show();
+            stat_link.text("Hide stats");
+            window.localStorage["show_stats"] = "true";
+        } else {
+            stat_div.hide();
+            stat_link.text("Show stats");
+            window.localStorage["show_stats"] = "false";
+        }
+    }
+    stat_link.click(function() {
+        if (stat_div.css("display") == "none") {
+            set_stats_visibility(true);
+        } else {
+            set_stats_visibility(false);
+        }
+    });
+    set_stats_visibility(window.localStorage["show_stats"] != "false");
 });

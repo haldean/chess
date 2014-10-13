@@ -1,1 +1,1 @@
-from openings import opening_stats
+from stats import Stats

@@ -108,7 +108,7 @@ def game(game_link):
             termination_msg = "Stalemate."
         else:
             termination_msg = "Checkmate &mdash; you lose."
-    opening, possible_openings = stats.opening_stats(game, eco_data)
+    stat_obj = stats.Stats(game, eco_data)
     return flask.render_template(
         "game.html",
         game=json.dumps(game.to_json_dict()),
@@ -120,8 +120,7 @@ def game(game_link):
         summary=game.summary("\n"),
         accessibility=json.dumps(access),
         opponent=opponent,
-        opening=opening,
-        possible_openings=possible_openings,
+        stats=stat_obj,
         )
 
 @sockapp.on("join")
