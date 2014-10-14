@@ -71,8 +71,8 @@ class RedisStore(object):
         game_id, _ = self.begin()
         white_link = self._pick_link()
         black_link = self._pick_link()
-        self.rconn.sadd(
-            _REDIS_PREFIX + "chess:players", white_email, black_email)
+        self.rconn.sadd(_REDIS_PREFIX + "chess:players", white_email)
+        self.rconn.sadd(_REDIS_PREFIX + "chess:players", black_email)
         # Create link-to-game mapping
         self.rconn.set(
             _REDIS_PREFIX + "chess:links:%s" % white_link,

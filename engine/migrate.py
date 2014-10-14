@@ -18,5 +18,5 @@ def populate_players():
         val = rstore.rconn.get(k)
         if val:
             players.add(val)
+            rstore.rconn.sadd("chess:players", val)
     print players
-    rstore.rconn.sadd("chess:players", *players)
