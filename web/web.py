@@ -11,7 +11,7 @@ import validate_email
 from flask.ext import socketio
 
 use_debug_server = False
-allow_debug_routes = False
+allow_debug_routes = True
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
