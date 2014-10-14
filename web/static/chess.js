@@ -16,9 +16,9 @@ $(document).ready(function() {
     console.log("document ready");
 
     // Initialize layout.
-    var board_elem = $("#board");
-    board_elem.height(board_elem.width());
-    if (window.innerWidth < 1200) {
+    $("#board tr").height($("#board").width() / 8);
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    if (width <= 480) {
         var stats_elem = $("#stats");
         var summary_elem = $("#summary");
         if (stats_elem.height() > summary_elem.height()) {

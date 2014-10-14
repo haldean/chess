@@ -8,7 +8,7 @@
     var accessibility = {{ accessibility|safe }};
     </script>
     <style>
-    @media only screen and (min-width: 320px) {
+    @media only screen and (max-device-width: 480px) {
         #board {
             width: 100%;
         }
@@ -21,47 +21,29 @@
         #summary {
             width: 100%;
         }
-        #termination {
-            font-size: 30pt;
-        }
-        #to_move {
-            font-size: 44pt;
-        }
         #summary {
-            font-size: 22pt;
             width: 50%;
         }
         #stats {
-            font-size: 20pt;
             width: 50%;
         }
-        .stat {
-            font-size: 24pt;
-        }
-        .stat small {
-            font-size: 20pt;
-        }
-        #stats_toggle {
-            font-size: 19pt;
-        }
         #alert {
-            width: 90%;
+            width: 200px;
             margin: 15% auto;
             background: #FFF;
             border-radius: 5pt;
-            padding: 30pt 15pt;
+            padding: 15pt 10pt;
             text-align: center;
         }
         #alert_text {
             font-weight: bold;
-            font-size: 48pt;
             text-align: center;
         }
         #alert button {
-            margin: 16pt;
+            margin: 8pt 4pt;
         }
     }
-    @media only screen and (min-width: 1200px) {
+    @media only screen and (min-width: 480px) {
         #board {
             width: 33em;
             height: 33em;
@@ -79,25 +61,6 @@
         #stats {
             margin-bottom: 2em;
             width: 100%;
-            font-size: 10pt;
-        }
-        #termination {
-            font-size: 20pt;
-        }
-        #to_move {
-            font-size: 14pt;
-        }
-        #summary {
-            font-size: 12pt;
-        }
-        .stat {
-            font-size: 14pt;
-        }
-        .stat small {
-            font-size: 10pt;
-        }
-        #stats_toggle {
-            font-size: 9pt;
         }
         #alert {
             width: 26em;
@@ -175,12 +138,14 @@
         width: 100%;
         text-align: center;
         margin-bottom: 1em;
+        font-size: 20pt;
     }
 
     #to_move {
         width: 100%;
         text-align: center;
-        margin-bottom: 2em;
+        margin-bottom: 1em;
+        font-size: 14pt;
     }
 
     #summary {
@@ -190,6 +155,7 @@
         background: #EEE;
         margin-top: 0;
         box-sizing: border-box;
+        font-size: 12pt;
     }
 
     #stats {
@@ -197,6 +163,7 @@
         padding: 1em 8pt;
         float: left;
         box-sizing: border-box;
+        font-size: 10pt;
     }
 
     #stats ol {
@@ -205,15 +172,18 @@
 
     .stat {
         margin-bottom: .5em;
+        font-size: 14pt;
     }
 
     .stat small {
         display: block;
+        font-size: 10pt;
     }
 
     #stats_toggle {
         color: #999;
         text-transform: lowercase;
+        font-size: 9pt;
     }
     </style>
 {% endblock %}

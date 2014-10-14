@@ -1,26 +1,30 @@
-@media only screen and (min-width: 320px) {
+@media only screen and (max-device-width: 480px) {
     body {
         font-size: 14pt;
-        margin: 2em;
+        margin: 1em;
     }
 
     hr {
-        height: 1.5em;
+        height: 0;
         background-color: #FFF;
         border: 0;
+        margin: 16pt;
     }
 
     button {
-        font-size: 36pt;
-        padding: 32pt;
-        border-radius: 8pt;
+        padding: 12pt;
+        border-radius: 4pt;
+    }
+
+    h1 {
+        font-size: 18pt;
     }
 
     cite {
-        font-size: 20pt;
+        font-size: 10pt;
     }
 }
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 480px) {
     body {
         max-width: 44em;
         margin: 24pt auto;
@@ -44,6 +48,10 @@
         font-size: 8pt;
         margin: .5em 0;
     }
+
+    h1 {
+        font-size: 36pt;
+    }
 }
 
 body {
@@ -57,7 +65,6 @@ pre {
 }
 
 h1 {
-    font-size: 36pt;
     margin-bottom: 0;
 }
 
