@@ -9,7 +9,8 @@ def populate_terminations():
 def populate_game_ids():
     keys = rstore.rconn.keys("chess:games:*:game")
     game_ids = [k.split(":")[-2] for k in keys]
-    rstore.rconn.sadd("chess:game_ids", *game_ids)
+    for game_id in game_ids:
+        rstore.rconn.sadd("chess:game_ids", game_id)
 
 def populate_players():
     keys = rstore.rconn.keys("chess:games:*:*:email")
