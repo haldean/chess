@@ -8,10 +8,17 @@
 var victories = {{ victories.json()|safe }};
 </script>
 <style>
+@media only screen and (max-device-width: 480px) {
+    .center_inside {
+        text-align: center;
+        width: 100%;
+        float: left;
+    }
+}
 #victories {
     float: left;
-    width: 250pt;
-    height: 250pt;
+    width: 300px;
+    height: 300px;
 }
 
 .center_outside {

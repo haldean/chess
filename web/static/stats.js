@@ -11,6 +11,8 @@ $(document).ready(function() {
     }
     nv.addGraph(function() {
         var chart = nv.models.pieChart()
+            .width(300)
+            .height(300)
             .x(function(d) { return d[0]; })
             .y(function(d) { return d[1]; })
             .showLabels(true)
