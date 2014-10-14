@@ -11,7 +11,7 @@ import validate_email
 from flask.ext import socketio
 
 use_debug_server = False
-allow_debug_routes = True
+allow_debug_routes = False
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -36,6 +36,12 @@ def debug_create_game():
     black_url = _to_game_url(black_link)
     return flask.render_template(
         "debug_create_game.html", white=white_url, black=black_url)
+
+@app.route("/stats")
+def global_stats():
+    victories = stats.VictoryStats(rstore)
+    return flask.render_template(
+        "stats.html", victories=victories)
 
 def _to_game_url(link):
     return "%sgame/%s" % (flask.request.url_root, link)

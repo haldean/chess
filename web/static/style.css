@@ -66,6 +66,8 @@ pre {
 
 h1 {
     margin-bottom: 0;
+    padding-bottom: 0;
+    line-height: 30pt;
 }
 
 h2 {
@@ -128,4 +130,23 @@ button.confirm {
 button.cancel {
     background: #DDD;
     color: #888;
+}
+
+header a {
+    font-size: 9pt;
+    line-height: 9pt;
+    margin-right: 4pt;
+    color: #666;
+    text-decoration: none;
+}
+
+footer {
+    margin: 1em 0;
+    font-size: 9pt;
+    color: #888;
+}
+
+footer a {
+    color: #AAA;
+    text-decoration: none;
 }

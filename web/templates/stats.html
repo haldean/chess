@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/lib/nv.d3.css">
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="/static/lib/nv.d3.min.js"></script>
+<script src="/static/stats.js"></script>
+<script>
+var victories = {{ victories.json()|safe }};
+</script>
+<style>
+#victories {
+    float: left;
+    width: 250pt;
+    height: 250pt;
+}
+
+.center_outside {
+    display: table;
+    margin: 0 auto;
+}
+
+.center_inside {
+    display: table-cell;
+    vertical-align: middle;
+    padding-right: 3em;
+    font-size: 16pt;
+}
+</style>
+{% endblock %}
+{% block body %}
+<h2>Game victories</h2>
+<div class="center_outside">
+    <svg id="victories"></svg>
+    <div class="center_inside">
+        White victories: {{ (100 * victories.white_prop)|round|int }}%<br>
+        Black victories: {{ (100 * victories.black_prop)|round|int }}%<br>
+        Stalemates: {{ (100 * victories.stalemate_prop)|round|int }}%<br>
+    </div>
+</div>
+{% endblock %}

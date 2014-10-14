@@ -33,7 +33,7 @@ class RedisStore(object):
     def begin(self):
         id = self.rconn.incr(_REDIS_PREFIX + "chess:games:nextid")
         game = chess.Game.new()
-        self._set_game(id, game)
+        self.set_game(id, game)
         return id, game
 
     def get(self, id):
@@ -105,9 +105,20 @@ class RedisStore(object):
     def move(self, id, move):
         game = self.get(id)
         game.move(move)
-        self._set_game(id, game)
+        self.set_game(id, game)
 
-    def _set_game(self, game_id, game):
+    def set_game(self, game_id, game):
         self.rconn.set(
             _REDIS_PREFIX + "chess:games:%s:game" % game_id,
             json.dumps(game.to_json_dict()))
+        if game.termination:
+            self.rconn.sadd(
+                _REDIS_PREFIX + "chess:terminations:%s" % game.termination,
+                game_id)
+
+    def terminations(self):
+        res = {}
+        for t in (chess.white_victory, chess.black_victory, chess.stalemate):
+            res[t] = self.rconn.scard(
+                _REDIS_PREFIX + "chess:terminations:%s" % t)
+        return res
