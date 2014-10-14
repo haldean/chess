@@ -25,10 +25,29 @@ var victories = {{ victories.json()|safe }};
     padding-right: 3em;
     font-size: 16pt;
 }
+
+.center_stat {
+    text-align: center;
+    font-size: 16pt;
+    width: 50%;
+    float: left;
+    box-size: border-box;
+}
+
+.huge_number {
+    font-size: 80pt;
+}
 </style>
 {% endblock %}
 {% block body %}
-<h2>Game victories</h2>
+<div class="center_stat">
+    <div class="huge_number">{{ plays.game_count }}</div>
+    Games played.
+</div>
+<div class="center_stat">
+    <div class="huge_number">{{ plays.player_count }}</div>
+    People who played a game.
+</div>
 <div class="center_outside">
     <svg id="victories"></svg>
     <div class="center_inside">

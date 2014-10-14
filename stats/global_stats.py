@@ -20,3 +20,8 @@ class VictoryStats(object):
             [chess.black_victory, self.black_prop],
             [chess.stalemate, self.stalemate_prop],
         ])
+
+class PlayStats(object):
+    def __init__(self, rstore):
+        self.game_count = rstore.game_count()
+        self.player_count = rstore.player_count()

@@ -40,8 +40,9 @@ def debug_create_game():
 @app.route("/stats")
 def global_stats():
     victories = stats.VictoryStats(rstore)
+    plays = stats.PlayStats(rstore)
     return flask.render_template(
-        "stats.html", victories=victories)
+        "stats.html", victories=victories, plays=plays)
 
 def _to_game_url(link):
     return "%sgame/%s" % (flask.request.url_root, link)

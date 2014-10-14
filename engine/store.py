@@ -32,6 +32,7 @@ class RedisStore(object):
 
     def begin(self):
         id = self.rconn.incr(_REDIS_PREFIX + "chess:games:nextid")
+        self.rconn.sadd(_REDIS_PREFIX + "chess:game_ids", id)
         game = chess.Game.new()
         self.set_game(id, game)
         return id, game
@@ -41,9 +42,7 @@ class RedisStore(object):
         return chess.Game.from_json_dict(json.loads(game_str))
 
     def all_games(self):
-        # Warning: expensive!
-        keys = self.rconn.keys(_REDIS_PREFIX + "chess:games:*:game")
-        game_ids = sorted([k.split(':')[-2] for k in keys])
+        game_ids = sorted(self.rconn.smembers(_REDIS_PREFIX + "chess:game_ids"))
         games = []
         for game_id in game_ids:
             game = self.get(game_id)
@@ -72,6 +71,8 @@ class RedisStore(object):
         game_id, _ = self.begin()
         white_link = self._pick_link()
         black_link = self._pick_link()
+        self.rconn.sadd(
+            _REDIS_PREFIX + "chess:players", white_email, black_email)
         # Create link-to-game mapping
         self.rconn.set(
             _REDIS_PREFIX + "chess:links:%s" % white_link,
@@ -122,3 +123,9 @@ class RedisStore(object):
             res[t] = self.rconn.scard(
                 _REDIS_PREFIX + "chess:terminations:%s" % t)
         return res
+
+    def game_count(self):
+        return self.rconn.scard("chess:game_ids")
+
+    def player_count(self):
+        return self.rconn.scard("chess:players")
