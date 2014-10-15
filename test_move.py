@@ -97,6 +97,37 @@ class MoveTest(unittest.TestCase):
         self.assertFalse(qs_b.can_castle(chess.black, chess.queenside))
         self.assertEqual(qs_b[7, 3], chess.Piece(chess.black, chess.rook))
 
+    def testPromotion(self):
+        board = """
+        __ __ __ __ bK __ __ __
+        __ wp __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ wK __ __ __
+        """
+        b = chess.Board.parse(board)
+        m = chess.Move.on_board((6, 1), (7, 1), b)
+        b = b.apply(m)
+        self.assertEqual(b[7, 1], chess.Piece(chess.white, chess.queen))
+
+        board = """
+        __ __ __ __ bK __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ bp __ __ __ __ __
+        __ __ __ __ wK __ __ __
+        """
+        b = chess.Board.parse(board)
+        m = chess.Move.on_board((1, 2), (0, 2), b)
+        b = b.apply(m)
+        self.assertEqual(b[0, 2], chess.Piece(chess.black, chess.queen))
+
 
 if __name__ == '__main__':
     unittest.main()

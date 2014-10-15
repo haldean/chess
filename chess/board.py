@@ -101,6 +101,8 @@ class Board(object):
                     if move.end_rank == passing_rank and move.end_file in self.en_passantable:
                         p_loc = (en_passant_rank, move.end[1])
                         board[p_loc[0]][p_loc[1]] = None
+            if move.end_rank in (0, 7):
+                board[move.end_rank][move.end_file] = Piece(start_p.color, queen)
         return self.__class__(board, open_castles, en_passantable)
 
     def find(self, piece):
