@@ -152,6 +152,7 @@ $(document).ready(function() {
                 ev.preventDefault();
             });
             if (document.title.substring(0, 4) != "(!!)") {
+                $("#favicon").attr("href", "/static/favicon-turn.png");
                 document.title = "(!!) " + document.title;
             }
         } else {
