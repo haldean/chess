@@ -10,8 +10,8 @@ import validate_email
 
 from flask.ext import socketio
 
-use_debug_server = True
-allow_debug_routes = True
+use_debug_server = False
+allow_debug_routes = False
 log_file = "/var/log/chess/access.log"
 
 app = flask.Flask("chess")
