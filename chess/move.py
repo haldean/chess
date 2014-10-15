@@ -232,7 +232,7 @@ def in_checkmate(b, color):
         for d_file in (-1, 0, 1):
             if not (0 <= position[0] + d_rank < 8):
                 continue
-            if not (0 <= position[1] + d_rank < 8):
+            if not (0 <= position[1] + d_file < 8):
                 continue
             check_pos = (position[0] + d_rank, position[1] + d_file)
             # Check to make sure a friendly piece isn't blocking this position
