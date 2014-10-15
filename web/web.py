@@ -10,8 +10,10 @@ import validate_email
 
 from flask.ext import socketio
 
-use_debug_server = False
-allow_debug_routes = False
+use_debug_server = True
+allow_debug_routes = True
+log_file = "/var/log/chess/access.log"
+
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
@@ -147,4 +149,4 @@ def run(api_keys):
     if use_debug_server:
         app.run(host="0.0.0.0", debug=True)
     else:
-        sockapp.run(app, host="0.0.0.0")
+        sockapp.run(app, log_file=log_file)

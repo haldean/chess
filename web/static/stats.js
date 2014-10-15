@@ -23,5 +23,30 @@ $(document).ready(function() {
             .color(color)
             ;
         d3.select("#victories").datum(victories).call(chart);
+        return chart;
+    });
+
+    nv.addGraph(function() {
+        var chart = nv.models.discreteBarChart()
+            .x(function(d) { return d.label; })
+            .y(function(d) { return d.value; })
+            .showYAxis(false)
+            .color(function(d, i) { return "#000"; })
+            .tooltips(false)
+            ;
+        var length_data = [{
+            key: "Game length",
+            values: [],
+        }];
+        for (var i = 0; i < play_stats.game_lengths.length; i++) {
+            gl = play_stats.game_lengths[i];
+            length_data[0].values.push({
+                label: gl[0],
+                value: gl[1],
+            });
+        }
+        console.log(length_data)
+        d3.select("#moves").datum(length_data).call(chart);
+        return chart;
     });
 });

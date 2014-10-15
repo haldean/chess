@@ -25,3 +25,14 @@ class PlayStats(object):
     def __init__(self, rstore):
         self.game_count = rstore.game_count()
         self.player_count = rstore.player_count()
+        self.game_lengths = []
+        game_length_dict = rstore.game_lengths()
+        for game_len in sorted(int(k) for k in game_length_dict.keys()):
+            self.game_lengths.append((game_len, game_length_dict[str(game_len)]))
+
+    def json(self):
+        return json.dumps({
+            "game_count": self.game_count,
+            "player_count": self.player_count,
+            "game_lengths": self.game_lengths
+        })
