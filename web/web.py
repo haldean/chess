@@ -3,6 +3,7 @@ import eco
 import emails
 import engine.store
 import flask
+import logs
 import json
 import os
 import stats
@@ -12,7 +13,6 @@ from flask.ext import socketio
 
 use_debug_server = False
 allow_debug_routes = False
-log_file = "/var/log/chess/access.log"
 
 app = flask.Flask("chess")
 rstore = engine.store.RedisStore()
@@ -20,16 +20,19 @@ sockapp = socketio.SocketIO(app)
 eco_data = eco.load_default()
 
 @app.route("/")
+@logs.wrap
 def index():
     return flask.render_template("index.html")
 
 @app.route("/debug")
+@logs.wrap
 def debug():
     if not allow_debug_routes:
         abort(404)
     return flask.render_template("debug.html", games=rstore.all_games())
 
 @app.route("/debug/create_game")
+@logs.wrap
 def debug_create_game():
     if not allow_debug_routes:
         abort(404)
@@ -40,6 +43,7 @@ def debug_create_game():
         "debug_create_game.html", white=white_url, black=black_url)
 
 @app.route("/stats")
+@logs.wrap
 def global_stats():
     victories = stats.VictoryStats(rstore)
     plays = stats.PlayStats(rstore)
@@ -50,6 +54,7 @@ def _to_game_url(link):
     return "%sgame/%s" % (flask.request.url_root, link)
 
 @app.route("/start", methods=["POST"])
+@logs.wrap
 def start():
     white_email = flask.request.form["white_email"]
     white_is_valid = validate_email.validate_email(white_email)
@@ -67,6 +72,7 @@ def start():
     return flask.redirect(flask.url_for("getready"))
 
 @app.route("/getready")
+@logs.wrap
 def getready():
     return flask.render_template("post_start.html")
 
@@ -93,6 +99,7 @@ def _make_move(game_link):
     sockapp.emit("reload", "", room=game_id)
 
 @app.route("/game/<game_link>", methods=["GET", "POST"])
+@logs.wrap
 def game(game_link):
     if flask.request.method == "POST":
         _make_move(game_link)
@@ -149,4 +156,4 @@ def run(api_keys):
     if use_debug_server:
         app.run(host="0.0.0.0", debug=True)
     else:
-        sockapp.run(app, log_file=log_file)
+        sockapp.run(app, log_file=logs.log_file)
