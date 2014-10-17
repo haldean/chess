@@ -13,7 +13,9 @@
 {% if termination_msg %}
     <div id="termination">
         {{ termination_msg|safe }}
+        {% if opponent %}
         <cite>Playing against {{ opponent }}</cite>
+        {% endif %}
     </div>
 {% else %}
     <div id="to_move">
