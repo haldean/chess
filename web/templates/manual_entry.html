@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<h2 class="top">Write in a game</h2>
+<p>
+Playing with your friends offline but still want to track your stats? Use this
+page to enter a game played elsewhere into the record.
+</p>
+<p class="smaller">
+Moves should be specified using
+<a href="http://en.wikipedia.org/wiki/Portable_Game_Notation">Portable Game
+Notation</a>, which is pretty much just standard algebraic notation. All tag
+pairs will be ignored, but game terminations will be honored. If no termination
+is entered, a playable game will be created and links will be emailed to the
+players.
+</p>
+<form action="" method="POST">
+    <label for="white_email">White's email address:</label>
+    <input type="text" name="white_email">
+    <label for="black_email">Black's email address:</label>
+    <input type="text" name="black_email">
+    <label for="game">Moves in PGN:</label>
+    <textarea name="game"></textarea>
+    <input type="submit" value="Submit game">
+</form>
+{% endblock %}
