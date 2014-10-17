@@ -1,3 +1,4 @@
+import argparse
 import chess
 import emails
 import engine.store
@@ -13,7 +14,6 @@ from render_game import render_game
 use_debug_server = False
 
 app = flask.Flask("chess")
-rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
 
 def debug_route(func):
@@ -120,12 +120,19 @@ def on_join(data):
     socketio.join_room(game_id)
 
 def run(api_keys):
+    argspec = argparse.ArgumentParser(description="Runs the chess frontend")
+    argspec.add_argument("--debug", help="use debug server", action="store_true")
+    argspec.add_argument("--redis_host", default="localhost")
+    args = argspec.parse_args()
+
+    global rstore
+    rstore = engine.store.RedisStore(host=args.redis_host)
     app.secret_key = api_keys.flask_session_key
     emails.set_mailgun_key(api_keys.mailgun_key)
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
-    if use_debug_server:
+    if args.debug:
         app.run(host="0.0.0.0", debug=True)
     else:
         sockapp.run(app, log_file=logs.log_file)
