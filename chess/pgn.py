@@ -25,8 +25,7 @@ def parse_pgn(pgn):
             if move_no_re.match(m_str):
                 m_str = m_str[m_str.find(".")+1:]
             if m_str in ("0-1", "1-0", "1/2-1/2"):
-                # Ignore game-ending metadata, we don't have a useful place to
-                # put it yet.
+                g.termination = m_str
                 break
             try:
                 m = algebraic.parse_algebraic(g.current_board, g.to_play, m_str)

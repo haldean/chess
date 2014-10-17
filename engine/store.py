@@ -25,8 +25,8 @@ class InMemoryStore(object):
         self._games[id].move(move)
 
 class RedisStore(object):
-    def __init__(self):
-        self.rconn = redis.StrictRedis(host="localhost", port=_REDIS_PORT, db=0)
+    def __init__(self, host):
+        self.rconn = redis.StrictRedis(host=host, port=_REDIS_PORT, db=0)
         self.rconn.setnx("chess:games:nextid", 0)
 
     def begin(self):

@@ -1,23 +1,28 @@
+import argparse
 import chess
-import eco
 import emails
 import engine.store
 import flask
 import logs
-import json
 import os
 import stats
 import validate_email
 
 from flask.ext import socketio
+from render_game import render_game
 
 use_debug_server = False
-allow_debug_routes = False
 
 app = flask.Flask("chess")
-rstore = engine.store.RedisStore()
 sockapp = socketio.SocketIO(app)
-eco_data = eco.load_default()
+
+def debug_route(func):
+    def _wrapped(*args, **kwargs):
+        if flask.request.host.split(':')[0] == "localhost":
+            return func(*args, **kwargs)
+        flask.abort(404)
+    _wrapped.__name__ = func.__name__
+    return _wrapped
 
 @app.route("/")
 @logs.wrap
@@ -26,16 +31,14 @@ def index():
 
 @app.route("/debug")
 @logs.wrap
+@debug_route
 def debug():
-    if not allow_debug_routes:
-        abort(404)
     return flask.render_template("debug.html", games=rstore.all_games())
 
 @app.route("/debug/create_game")
 @logs.wrap
+@debug_route
 def debug_create_game():
-    if not allow_debug_routes:
-        abort(404)
     white_link, black_link = rstore.start_game("", "")
     white_url = _to_game_url(white_link)
     black_url = _to_game_url(black_link)
@@ -105,39 +108,8 @@ def game(game_link):
         _make_move(game_link)
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
-    access = chess.accessibility_map(game.current_board);
     opponent, _ = rstore.get_user(game_id, chess.opposite_color(color))
-    if game.to_play is None:
-        to_play = "nobody"
-    else:
-        to_play = chess.color_names[game.to_play]
-    if game.termination is None:
-        termination = "undefined"
-        termination_msg = None
-    else:
-        termination = "'%s'" % game.termination
-        if color == chess.white and game.termination == chess.white_victory:
-            termination_msg = "Checkmate &mdash; you win!"
-        elif color == chess.black and game.termination == chess.black_victory:
-            termination_msg = "Checkmate &mdash; you win!"
-        elif game.termination == chess.stalemate:
-            termination_msg = "Stalemate."
-        else:
-            termination_msg = "Checkmate &mdash; you lose."
-    stat_obj = stats.Stats(game, eco_data)
-    return flask.render_template(
-        "game.html",
-        game=json.dumps(game.to_json_dict()),
-        to_play=to_play,
-        termination=termination,
-        termination_msg=termination_msg,
-        color_name=chess.color_names[color],
-        player=color,
-        summary=game.summary("\n"),
-        accessibility=json.dumps(access),
-        opponent=opponent,
-        stats=stat_obj,
-        )
+    return render_game(color, game_id, game, opponent)
 
 @sockapp.on("join")
 def on_join(data):
@@ -148,12 +120,19 @@ def on_join(data):
     socketio.join_room(game_id)
 
 def run(api_keys):
+    argspec = argparse.ArgumentParser(description="Runs the chess frontend")
+    argspec.add_argument("--debug", help="use debug server", action="store_true")
+    argspec.add_argument("--redis_host", default="localhost")
+    args = argspec.parse_args()
+
+    global rstore
+    rstore = engine.store.RedisStore(host=args.redis_host)
     app.secret_key = api_keys.flask_session_key
     emails.set_mailgun_key(api_keys.mailgun_key)
     # Jinja does some funny shit here; just set the app directory to the
     # directory that web.py is in.
     app.root_path = os.path.abspath(os.path.dirname(__file__))
-    if use_debug_server:
+    if args.debug:
         app.run(host="0.0.0.0", debug=True)
     else:
-        sockapp.run(app, log_file=logs.log_file)
+        sockapp.run(app, host="0.0.0.0", log_file=logs.log_file)

@@ -7,185 +7,7 @@
     var termination = {{ termination|safe }};
     var accessibility = {{ accessibility|safe }};
     </script>
-    <style>
-    @media only screen and (max-device-width: 480px) {
-        #board {
-            width: 100%;
-        }
-        #board tr {
-            height: 4em;
-        }
-        #board td {
-            width: 12%;
-        }
-        #summary {
-            width: 100%;
-        }
-        #summary {
-            width: 50%;
-        }
-        #stats {
-            width: 50%;
-        }
-        #alert {
-            width: 200px;
-            margin: 15% auto;
-            background: #FFF;
-            border-radius: 5pt;
-            padding: 15pt 10pt;
-            text-align: center;
-        }
-        #alert_text {
-            font-weight: bold;
-            text-align: center;
-        }
-        #alert button {
-            margin: 8pt 4pt;
-        }
-    }
-    @media only screen and (min-width: 480px) {
-        #board {
-            width: 33em;
-            height: 33em;
-        }
-        #board tr {
-            height: 4em;
-        }
-        #board td {
-            width: 4em;
-        }
-        #summary {
-            width: 11em;
-            height: 33em;
-        }
-        #stats {
-            margin-bottom: 2em;
-            width: 100%;
-        }
-        #alert {
-            width: 26em;
-            height: 30pt;
-            margin: 15% auto;
-            background: #FFF;
-            border-radius: 5pt;
-            padding: 10pt 15pt;
-            display: table;
-            overflow: hidden;
-        }
-        #alert_text {
-            display: table-cell;
-            vertical-align: middle;
-            font-weight: bold;
-            font-size: 18pt;
-            text-align: left;
-        }
-        #alert button {
-            float: right;
-            margin: 4pt;
-        }
-    }
-
-    #board {
-        border: 0.5em solid #000;
-        padding: 0;
-        float: left;
-    }
-    #board tr {
-        padding: 0;
-        margin: 0;
-    }
-    #board td {
-        padding: 0;
-        margin: 0;
-        vertical-align: center;
-        text-align: center;
-    }
-
-    #board * {
-        box-sizing: border-box;
-    }
-
-    .black {
-        background-color: #CCC;
-    }
-    .black.selected {
-        border: 4pt solid #555;
-    }
-
-    .white {
-        background-color: #FFF;
-    }
-    .white.selected {
-        border: 4pt solid #999;
-    }
-
-    img {
-        width: 90%;
-        height: 90%;
-    }
-
-    #popup {
-        background: rgba(0, 0, 0, 0.4);
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        display: none;
-    }
-
-    #termination {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 1em;
-        font-size: 20pt;
-    }
-
-    #to_move {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 1em;
-        font-size: 14pt;
-    }
-
-    #summary {
-        float: left;
-        padding: 1em 1em;
-        color: #999;
-        background: #EEE;
-        margin-top: 0;
-        box-sizing: border-box;
-        font-size: 12pt;
-    }
-
-    #stats {
-        background: #F9F9F9;
-        padding: 1em 8pt;
-        float: left;
-        box-sizing: border-box;
-        font-size: 10pt;
-    }
-
-    #stats ol {
-        margin: 4pt;
-    }
-
-    .stat {
-        margin-bottom: .5em;
-        font-size: 14pt;
-    }
-
-    .stat small {
-        display: block;
-        font-size: 10pt;
-    }
-
-    #stats_toggle {
-        color: #999;
-        text-transform: lowercase;
-        font-size: 9pt;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/static/game.css">
 {% endblock %}
 {% block body %}
 {% if termination_msg %}
@@ -286,9 +108,13 @@
     </tr>
 </table>
 <div id="summary">
-<pre>{{ summary }}</pre>
-<a href="#" id="stats_toggle">Toggle stats</a>
+    <div class="monospace">{{ summary|safe }}</div>
+    <a href="#" id="stats_toggle">Toggle stats</a>
 </div>
+<div id="history_warning">
+    You're looking at game history.
+    <a href="#" id="leave_history">Go back to game</a>
+  </div>
 <div id="stats">
 
 Material advantage:
