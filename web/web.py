@@ -135,4 +135,4 @@ def run(api_keys):
     if args.debug:
         app.run(host="0.0.0.0", debug=True)
     else:
-        sockapp.run(app, log_file=logs.log_file)
+        sockapp.run(app, host="0.0.0.0", log_file=logs.log_file)
