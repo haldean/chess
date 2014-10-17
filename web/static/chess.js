@@ -156,26 +156,32 @@ function init_board(b) {
 }
 
 function load_from_hash(ev) {
+    function load_last() {
+        $("#history_warning").hide();
+        init_board(game.boards[game.boards.length - 1].board);
+        $("#move" + (game.boards.length - 1)).css("color", "#000");
+    }
+
     if (ev) {
         ev.preventDefault();
     }
+    $(".move_link").css("color", "");
     board_id = window.location.hash;
     if (!board_id) {
-        $("#history_warning").hide();
-        init_board(game.boards[game.boards.length - 1].board);
+        load_last();
         return;
     }
     board_to_display = +(board_id.split("-")[1]);
     if (!board_to_display
             || board_to_display < 0
             || board_to_display + 1 >= game.boards.length) {
-        $("#history_warning").hide();
-        init_board(game.boards[game.boards.length - 1].board);
+        load_last();
         return;
     }
     $("#history_warning").show();
     reset_move();
     load_board(game.boards[board_to_display].board);
+    $("#move" + board_to_display).css("color", "#000");
 }
 window.onhashchange = load_from_hash;
 

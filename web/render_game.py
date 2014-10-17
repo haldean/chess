@@ -18,7 +18,8 @@ def termination_str(game):
 
 def linkify_summary(game):
     def linkify_move(i, m):
-        return "<a href=\"#board-%i\">%s</a>" % (i + 1, m.algebraic)
+        return "<a class=\"move_link\" id=\"move%d\" href=\"#board-%d\">%s</a>" % (
+            i + 1, i + 1, m.algebraic)
     move_links = map(lambda x: linkify_move(*x), enumerate(game.moves))
     pairs = [move_links[i:i+2] for i in range(0, len(move_links), 2)]
     res = []
