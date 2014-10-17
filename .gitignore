@@ -56,3 +56,4 @@ target/
 api_keys.py
 eco/eco.pickle
 local-data
+Dockerfile
