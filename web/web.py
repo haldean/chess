@@ -39,11 +39,13 @@ def debug():
 @logs.wrap
 @debug_route
 def debug_create_game():
-    white_link, black_link = rstore.start_game("", "")
+    white_link, black_link, public_link, _ = rstore.start_game("", "")
     white_url = _to_game_url(white_link)
     black_url = _to_game_url(black_link)
+    public_url = _to_game_url(public_link)
     return flask.render_template(
-        "debug_create_game.html", white=white_url, black=black_url)
+        "debug_create_game.html",
+        white=white_url, black=black_url, public=public_url)
 
 @app.route("/stats")
 @logs.wrap
@@ -67,7 +69,7 @@ def start():
         print "Bad email addresses; %s (%s) %s (%s)" % (
             white_email, white_is_valid, black_email, black_is_valid)
         flask.abort(400)
-    white_link, black_link = rstore.start_game(white_email, black_email)
+    white_link, black_link, _, _ = rstore.start_game(white_email, black_email)
     white_url = _to_game_url(white_link)
     black_url = _to_game_url(black_link)
     emails.send_welcome(white_email, white_url, black_email)
@@ -108,8 +110,30 @@ def game(game_link):
         _make_move(game_link)
         return "ok"
     color, game_id, game = rstore.game_from_link(game_link)
-    opponent, _ = rstore.get_user(game_id, chess.opposite_color(color))
+    if color is not None:
+        opponent, _ = rstore.get_user(game_id, chess.opposite_color(color))
+    else:
+        opponent = None
     return render_game(color, game_id, game, opponent)
+
+@app.route("/manual-entry", methods=["GET", "POST"])
+@logs.wrap
+def manual_entry():
+    if flask.request.method == "POST":
+        white_email = flask.request.form["white_email"]
+        black_email = flask.request.form["black_email"]
+        white_link, black_link, public_link, game_id = rstore.start_game(
+            white_email, black_email)
+        pgn = flask.request.form["game"]
+        game = chess.parse_pgn(pgn)
+        rstore.set_game(game_id, game)
+        if game.termination is None:
+            white_url = _to_game_url(white_link)
+            black_url = _to_game_url(black_link)
+            emails.send_welcome(white_email, white_url, black_email)
+            emails.send_welcome(black_email, black_url, white_email)
+        return flask.redirect(_to_game_url(public_link))
+    return flask.render_template("manual_entry.html")
 
 @sockapp.on("join")
 def on_join(data):

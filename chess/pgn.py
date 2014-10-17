@@ -20,7 +20,7 @@ def parse_pgn(pgn):
     pgn = filter(lambda x: x, pgn)
     ply_no = 1
     for line in pgn:
-        split = line.split(" ")
+        split = line.strip().split(" ")
         for i, m_str in enumerate(split):
             if move_no_re.match(m_str):
                 m_str = m_str[m_str.find(".")+1:]
@@ -30,10 +30,10 @@ def parse_pgn(pgn):
             try:
                 m = algebraic.parse_algebraic(g.current_board, g.to_play, m_str)
                 g.move(m)
-            except Exception:
-                print "Failed to parse move %d (%s) for %s on\n%s" % (
-                    ply_no, m_str, color_names[g.to_play], g.current_board)
-                raise
+            except Exception as e:
+                raise ValueError(
+                        "Failed to parse move %d (%s) for %s (%s) on\n%s" % (
+                    ply_no, m_str, color_names[g.to_play], e, g.current_board))
             ply_no += 1
     return g
 

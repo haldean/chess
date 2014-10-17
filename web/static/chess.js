@@ -123,7 +123,7 @@ function init_board(b) {
     load_board(b);
     console.log("loading for player " + player);
     $(".piece").unbind("click");
-    if (player == game.to_play) {
+    if (player == game.to_play && !termination) {
         $(".piece[data-color='" + player + "']").draggable({
             delay: 0,
             distance: 1,

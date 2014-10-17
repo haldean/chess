@@ -67,7 +67,7 @@ pre, .monospace {
 h1 {
     margin-bottom: 0;
     padding-bottom: 0;
-    line-height: 30pt;
+    line-height: 34pt;
 }
 
 h2 {
@@ -85,6 +85,10 @@ p {
     margin-top: 0.5em;
 }
 
+p.smaller {
+    font-size: 12pt;
+}
+
 cite {
     display: block;
 }
@@ -93,12 +97,19 @@ cite {
     color: #DDD;
 }
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], textarea {
     display: block;
     width: 100%;
     font-family: inherit;
     font-size: 18pt;
     margin-bottom: 12pt;
+}
+
+textarea {
+    font-family: Cousine, monospace;
+    font-weight: 400;
+    font-size: 14pt;
+    height: 8em;
 }
 
 input[type=submit] {

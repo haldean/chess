@@ -56,6 +56,8 @@ class RedisStore(object):
 
     def game_from_link(self, link):
         color, game_id = json.loads(self.rconn.get("chess:links:%s" % link))
+        if color == "public":
+            color = None
         return color, game_id, self.get(game_id)
 
     def _pick_link(self):
@@ -69,6 +71,7 @@ class RedisStore(object):
         game_id, _ = self.begin()
         white_link = self._pick_link()
         black_link = self._pick_link()
+        public_link = self._pick_link()
         self.rconn.sadd("chess:players", white_email)
         self.rconn.sadd("chess:players", black_email)
         # Create link-to-game mapping
@@ -76,6 +79,8 @@ class RedisStore(object):
             "chess:links:%s" % white_link, json.dumps((chess.white, game_id)))
         self.rconn.set(
             "chess:links:%s" % black_link, json.dumps((chess.black, game_id)))
+        self.rconn.set(
+            "chess:links:%s" % public_link, json.dumps(("public", game_id)))
         # Create game-to-email mapping
         self.rconn.set(
             "chess:games:%s:%s:email" % (game_id, chess.white), white_email)
@@ -86,7 +91,8 @@ class RedisStore(object):
             "chess:games:%s:%s:link" % (game_id, chess.white), white_link)
         self.rconn.set(
             "chess:games:%s:%s:link" % (game_id, chess.black), black_link)
-        return white_link, black_link
+        self.rconn.set("chess:games:%s:public:link" % game_id, public_link)
+        return white_link, black_link, public_link, game_id
 
     def get_user(self, game_id, color):
         email_addr = self.rconn.get("chess:games:%s:%s:email" % (game_id, color))

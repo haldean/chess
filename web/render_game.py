@@ -6,15 +6,27 @@ import stats
 
 eco_data = eco.load_default()
 
-def termination_str(game):
+def termination_str(game, color):
+    if color is None:
+        if game.termination == chess.white_victory:
+            return "Game over &mdash; white wins"
+        elif game.termination == chess.black_victory:
+            return "Game over &mdash; black wins"
+        return "Stalemate."
     if color == chess.white and game.termination == chess.white_victory:
-        termination_msg = "Checkmate &mdash; you win!"
+        if chess.in_checkmate(game.current_board, chess.black):
+            return "Checkmate &mdash; you win!"
+        return "Game over &mdash; you win!"
     elif color == chess.black and game.termination == chess.black_victory:
-        termination_msg = "Checkmate &mdash; you win!"
+        if chess.in_checkmate(game.current_board, chess.white):
+            return "Checkmate &mdash; you win!"
+        return "Game over &mdash; you win!"
     elif game.termination == chess.stalemate:
-        termination_msg = "Stalemate."
+        return "Stalemate."
     else:
-        termination_msg = "Checkmate &mdash; you lose."
+        if chess.in_checkmate(game.current_board, color):
+            return "Checkmate &mdash; you lose."
+        return "Game over &mdash; you lose."
 
 def linkify_summary(game):
     def linkify_move(i, m):
@@ -43,7 +55,11 @@ def render_game(color, game_id, game, opponent):
         termination_msg = None
     else:
         termination = "'%s'" % game.termination
-        termination_msg = termination_str(game)
+        termination_msg = termination_str(game, color)
+    if color is None:
+        color_name = None
+    else:
+        color_name = chess.color_names[color]
     stat_obj = stats.Stats(game, eco_data)
     return flask.render_template(
         "game.html",
@@ -51,7 +67,7 @@ def render_game(color, game_id, game, opponent):
         to_play=to_play,
         termination=termination,
         termination_msg=termination_msg,
-        color_name=chess.color_names[color],
+        color_name=color_name,
         player=color,
         summary=linkify_summary(game),
         accessibility=json.dumps(access),

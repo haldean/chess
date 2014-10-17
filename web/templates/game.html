@@ -17,12 +17,16 @@
     </div>
 {% else %}
     <div id="to_move">
-        {% if color_name == to_play %}
+        {% if not color_name %}
+        {{ to_play|title }} to move.
+        {% elif color_name == to_play %}
         You are {{ color_name }}, your move.
         {% else %}
         You are {{ color_name }}, {{ to_play }} to move.
         {% endif %}
+        {% if opponent %}
         <cite>Playing against {{ opponent }}</cite>
+        {% endif %}
     </div>
 {% endif %}
 <table id="board" cellspacing="0">
