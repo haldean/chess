@@ -155,33 +155,46 @@ function init_board(b) {
     current_board = b;
 }
 
-function load_from_hash(ev) {
-    function load_last() {
-        $("#history_warning").hide();
-        init_board(game.boards[game.boards.length - 1].board);
-        $("#move" + (game.boards.length - 1)).css("color", "#000");
-    }
-
-    if (ev) {
-        ev.preventDefault();
-    }
-    $(".move_link").css("color", "");
+function index_from_hash() {
     board_id = window.location.hash;
     if (!board_id) {
-        load_last();
-        return;
+        return game.boards.length - 1;
     }
     board_to_display = +(board_id.split("-")[1]);
     if (!board_to_display
             || board_to_display < 0
             || board_to_display + 1 >= game.boards.length) {
-        load_last();
-        return;
+        return game.boards.length - 1;
     }
+    return board_to_display;
+}
+
+function init_with_current() {
+    $(".move_link").css("color", "");
+    $("#history_warning").hide();
+    init_board(game.boards[game.boards.length - 1].board);
+    $("#move" + (game.boards.length - 1)).css("color", "#000");
+}
+
+function display_history_at(board_to_display) {
+    $(".move_link").css("color", "");
     $("#history_warning").show();
     reset_move();
+    prevent_drag();
     load_board(game.boards[board_to_display].board);
     $("#move" + board_to_display).css("color", "#000");
+}
+
+function load_from_hash(ev) {
+    if (ev) {
+        ev.preventDefault();
+    }
+    board_to_display = index_from_hash();
+    if (board_to_display + 1 >= game.boards.length) {
+        init_with_current();
+        return;
+    }
+    display_history_at(board_to_display);
 }
 window.onhashchange = load_from_hash;
 
@@ -241,4 +254,21 @@ $(document).ready(function() {
         }
     });
     set_stats_visibility(window.localStorage["show_stats"] != "false");
+
+    // Set up move paginators
+    $("#pager_left").click(function(ev) {
+        ev.preventDefault();
+        var idx = index_from_hash();
+        var new_idx = idx - 1;
+        if (new_idx < 0) {
+            return;
+        }
+        window.location.hash = "board-" + new_idx;
+    });
+    $("#pager_right").click(function(ev) {
+        ev.preventDefault();
+        var idx = index_from_hash();
+        var new_idx = idx + 1;
+        window.location.hash = "board-" + new_idx;
+    });
 });

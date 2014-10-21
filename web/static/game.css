@@ -199,3 +199,28 @@ img {
 footer {
     float: left;
 }
+
+#pager div {
+    width: calc(50% - 4pt);
+    box-sizing: border-box;
+    float: left;
+    clear: none;
+    text-align: center;
+    background: #F7F7F7;
+    padding: 8pt;
+    cursor: pointer;
+}
+
+#pager div:active {
+    background: #F0F0F0;
+}
+
+#pager_left {
+    margin-right: 8pt;
+}
+
+#pager {
+    width: 100%;
+    float: left;
+    margin: 0 0 .75em;
+}
