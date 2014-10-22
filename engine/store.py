@@ -5,43 +5,26 @@ import os
 import redis
 import uuid
 
-_REDIS_PORT = 6379
-
-class InMemoryStore(object):
-    def __init__(self):
-        self._games = {}
-        self._next_id = 0
-
-    def begin(self):
-        id = self._next_id
-        self._next_id += 1
-        self._games[id] = chess.Game.new()
-        return id, self._games[id]
-
-    def get(self, id):
-        return self._games.get(id, None)
-
-    def move(self, id, move):
-        self._games[id].move(move)
+from engine.keys import *
 
 class RedisStore(object):
-    def __init__(self, host):
-        self.rconn = redis.StrictRedis(host=host, port=_REDIS_PORT, db=0)
-        self.rconn.setnx("chess:games:nextid", 0)
+    def __init__(self, host, port=6379, db=0):
+        self.rconn = redis.StrictRedis(host=host, port=port, db=db)
+        self.rconn.setnx(key_next_id(), 0)
 
     def begin(self):
-        id = self.rconn.incr("chess:games:nextid")
-        self.rconn.sadd("chess:game_ids", id)
+        id = self.rconn.incr(key_next_id())
+        self.rconn.sadd(key_all_ids(), id)
         game = chess.Game.new()
         self.set_game(id, game)
         return id, game
 
     def get(self, id):
-        game_str = self.rconn.get("chess:games:%s:game" % id)
+        game_str = self.rconn.get(key_game(id))
         return chess.Game.from_json_dict(json.loads(game_str))
 
     def all_games(self):
-        game_ids = sorted(self.rconn.smembers("chess:game_ids"))
+        game_ids = sorted(self.rconn.smembers(key_all_ids()))
         games = []
         for game_id in game_ids:
             game = self.get(game_id)
@@ -55,8 +38,8 @@ class RedisStore(object):
         return games
 
     def game_from_link(self, link):
-        color, game_id = json.loads(self.rconn.get("chess:links:%s" % link))
-        if color == "public":
+        color, game_id = json.loads(self.rconn.get(key_game_from_link(link)))
+        if color == PUBLIC_LINK:
             color = None
         return color, game_id, self.get(game_id)
 
@@ -64,7 +47,7 @@ class RedisStore(object):
         link = None
         while True:
             link = base64.b32encode(os.urandom(5)).lower()
-            if not self.rconn.exists("chess:links:%s" % link):
+            if not self.rconn.exists(key_game_from_link(link)):
                 return link
 
     def start_game(self, white_email, black_email):
@@ -72,31 +55,27 @@ class RedisStore(object):
         white_link = self._pick_link()
         black_link = self._pick_link()
         public_link = self._pick_link()
-        self.rconn.sadd("chess:players", white_email)
-        self.rconn.sadd("chess:players", black_email)
+        self.rconn.sadd(key_players(), white_email)
+        self.rconn.sadd(key_players(), black_email)
         # Create link-to-game mapping
         self.rconn.set(
-            "chess:links:%s" % white_link, json.dumps((chess.white, game_id)))
+            key_game_from_link(white_link), json.dumps((chess.white, game_id)))
         self.rconn.set(
-            "chess:links:%s" % black_link, json.dumps((chess.black, game_id)))
+            key_game_from_link(black_link), json.dumps((chess.black, game_id)))
         self.rconn.set(
-            "chess:links:%s" % public_link, json.dumps(("public", game_id)))
+            key_game_from_link(public_link), json.dumps((PUBLIC_LINK, game_id)))
         # Create game-to-email mapping
-        self.rconn.set(
-            "chess:games:%s:%s:email" % (game_id, chess.white), white_email)
-        self.rconn.set(
-            "chess:games:%s:%s:email" % (game_id, chess.black), black_email)
+        self.rconn.set(key_email_from_game(game_id, chess.white), white_email)
+        self.rconn.set(key_email_from_game(game_id, chess.black), black_email)
         # Create game-to-link mapping
-        self.rconn.set(
-            "chess:games:%s:%s:link" % (game_id, chess.white), white_link)
-        self.rconn.set(
-            "chess:games:%s:%s:link" % (game_id, chess.black), black_link)
-        self.rconn.set("chess:games:%s:public:link" % game_id, public_link)
+        self.rconn.set(key_link_from_game(game_id, chess.white), white_link)
+        self.rconn.set(key_link_from_game(game_id, chess.black), black_link)
+        self.rconn.set(key_link_from_game(game_id, PUBLIC_LINK), public_link)
         return white_link, black_link, public_link, game_id
 
     def get_user(self, game_id, color):
-        email_addr = self.rconn.get("chess:games:%s:%s:email" % (game_id, color))
-        link = self.rconn.get("chess:games:%s:%s:link" % (game_id, color))
+        email_addr = self.rconn.get(key_email_from_game(game_id, color))
+        link = self.rconn.get(key_link_from_game(game_id, color))
         return email_addr, link
 
     def move(self, id, move):
@@ -105,23 +84,6 @@ class RedisStore(object):
         self.set_game(id, game)
 
     def set_game(self, game_id, game):
-        self.rconn.set(
-            "chess:games:%s:game" % game_id, json.dumps(game.to_json_dict()))
+        self.rconn.set(key_game(game_id), json.dumps(game.to_json_dict()))
         if game.termination:
-            self.rconn.sadd(
-                "chess:terminations:%s" % game.termination, game_id)
-
-    def terminations(self):
-        res = {}
-        for t in (chess.white_victory, chess.black_victory, chess.stalemate):
-            res[t] = self.rconn.scard("chess:terminations:%s" % t)
-        return res
-
-    def game_count(self):
-        return self.rconn.scard("chess:game_ids")
-
-    def player_count(self):
-        return self.rconn.scard("chess:players")
-
-    def game_lengths(self):
-        return self.rconn.hgetall("chess:stats:game_lengths")
+            self.rconn.sadd(key_terminations(game.termination), game_id)
