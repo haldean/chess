@@ -260,7 +260,7 @@ $(document).ready(function() {
         ev.preventDefault();
         var idx = index_from_hash();
         var new_idx = idx - 1;
-        if (new_idx < 0) {
+        if (new_idx <= 0) {
             return;
         }
         window.location.hash = "board-" + new_idx;
@@ -269,6 +269,13 @@ $(document).ready(function() {
         ev.preventDefault();
         var idx = index_from_hash();
         var new_idx = idx + 1;
+        if (new_idx >= game.boards.length) {
+            return;
+        }
         window.location.hash = "board-" + new_idx;
     });
+    $("#pager div")
+        .attr("unselectable", "on")
+        .css("user-select", "none")
+        .on("selectstart", false);
 });
