@@ -30,10 +30,12 @@ class RedisStore(object):
             game = self.get(game_id)
             white_email, white_link = self.get_user(game_id, chess.white)
             black_email, black_link = self.get_user(game_id, chess.black)
+            public_link = self.get_public_link(game_id)
             games.append(dict(
                 game_id=game_id, game=game,
                 white_email=white_email, white_link=white_link,
                 black_email=black_email, black_link=black_link,
+                public_link=public_link,
             ))
         return games
 

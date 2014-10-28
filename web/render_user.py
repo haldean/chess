@@ -7,8 +7,7 @@ import utils
 eco_data = eco.load_default()
 
 def render_recent_game(game_stats):
-    game_str = "Game against %s, last move on %s" % (
-        game_stats.opponent, game_stats.last_move)
+    game_str = "Game against %s" % game_stats.opponent
     return """
         <a href="%s">%s</a>
     """ % (utils.to_game_url(game_stats.public_link), game_str)

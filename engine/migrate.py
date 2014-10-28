@@ -1,4 +1,5 @@
 import argparse
+import json
 import store
 
 from keys import *
@@ -34,8 +35,20 @@ class Migrator(object):
             if email:
                 self.rstore.rconn.sadd(key_player_games(email), game_id)
 
+    def create_public_links(self):
+        for game in self.rstore.all_games():
+            if game["public_link"] is not None:
+                continue
+            public_link = self.rstore._pick_link()
+            self.rstore.rconn.set(
+                key_game_from_link(public_link),
+                json.dumps((store.PUBLIC_LINK, game["game_id"])))
+            self.rstore.rconn.set(
+                key_link_from_game(game["game_id"], store.PUBLIC_LINK),
+                public_link)
+
 CURRENT_MIGRATIONS = [
-    Migrator.populate_player_games,
+    Migrator.create_public_links,
     ]
 
 if __name__ == "__main__":

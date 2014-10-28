@@ -228,6 +228,7 @@ $(document).ready(function() {
         console.log("join sent");
     });
     socket.on("reload", function() {
+        document.location.hash = "";
         document.location.reload();
     });
 
