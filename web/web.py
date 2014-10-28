@@ -6,10 +6,12 @@ import flask
 import logs
 import os
 import stats
+import utils
 import validate_email
 
 from flask.ext import socketio
 from render_game import render_game
+from render_user import render_user
 
 use_debug_server = False
 
@@ -40,9 +42,9 @@ def debug():
 @debug_route
 def debug_create_game():
     white_link, black_link, public_link, _ = rstore.start_game("", "")
-    white_url = _to_game_url(white_link)
-    black_url = _to_game_url(black_link)
-    public_url = _to_game_url(public_link)
+    white_url = utils.to_game_url(white_link)
+    black_url = utils.to_game_url(black_link)
+    public_url = utils.to_game_url(public_link)
     return flask.render_template(
         "debug_create_game.html",
         white=white_url, black=black_url, public=public_url)
@@ -54,9 +56,6 @@ def global_stats():
     plays = stats.PlayStats(rstore)
     return flask.render_template(
         "stats.html", victories=victories, plays=plays)
-
-def _to_game_url(link):
-    return "%sgame/%s" % (flask.request.url_root, link)
 
 @app.route("/start", methods=["POST"])
 @logs.wrap
@@ -70,8 +69,8 @@ def start():
             white_email, white_is_valid, black_email, black_is_valid)
         flask.abort(400)
     white_link, black_link, _, _ = rstore.start_game(white_email, black_email)
-    white_url = _to_game_url(white_link)
-    black_url = _to_game_url(black_link)
+    white_url = utils.to_game_url(white_link)
+    black_url = utils.to_game_url(black_link)
     emails.send_welcome(white_email, white_url, black_email)
     emails.send_welcome(black_email, black_url, white_email)
     return flask.redirect(flask.url_for("getready"))
@@ -99,7 +98,8 @@ def _make_move(game_link):
     # an empty address.
     if player_email and opponent_email:
         emails.send_move_email(
-            opponent_email, _to_game_url(opponent_link), player_email, move_str)
+            opponent_email, utils.to_game_url(opponent_link),
+            player_email, move_str)
     # Reload all the other players.
     sockapp.emit("reload", "", room=game_id)
 
@@ -116,6 +116,16 @@ def game(game_link):
         opponent = None
     return render_game(color, game_id, game, opponent)
 
+@app.route("/user")
+@logs.wrap
+def user_search():
+    return flask.render_template("user_lookup.html")
+
+@app.route("/user/<email_addr>")
+@logs.wrap
+def user(email_addr):
+    return render_user(rstore, email_addr)
+
 @app.route("/manual-entry", methods=["GET", "POST"])
 @logs.wrap
 def manual_entry():
@@ -128,11 +138,11 @@ def manual_entry():
         game = chess.parse_pgn(pgn)
         rstore.set_game(game_id, game)
         if game.termination is None:
-            white_url = _to_game_url(white_link)
-            black_url = _to_game_url(black_link)
+            white_url = utils.to_game_url(white_link)
+            black_url = utils.to_game_url(black_link)
             emails.send_welcome(white_email, white_url, black_email)
             emails.send_welcome(black_email, black_url, white_email)
-        return flask.redirect(_to_game_url(public_link))
+        return flask.redirect(utils.to_game_url(public_link))
     return flask.render_template("manual_entry.html")
 
 @sockapp.on("join")

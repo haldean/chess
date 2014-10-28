@@ -21,3 +21,9 @@ class StatsStore(store.RedisStore):
 
     def game_lengths(self):
         return self.rconn.hgetall(keys.key_game_lengths())
+
+    def games_for_player(self, player):
+        return self.rconn.smembers(keys.key_player_games(player))
+
+def wrap(rstore):
+    return StatsStore(rstore)

@@ -71,12 +71,18 @@ class RedisStore(object):
         self.rconn.set(key_link_from_game(game_id, chess.white), white_link)
         self.rconn.set(key_link_from_game(game_id, chess.black), black_link)
         self.rconn.set(key_link_from_game(game_id, PUBLIC_LINK), public_link)
+        # Create email-to-game mapping
+        self.rconn.sadd(key_player_games(white_email), game_id)
+        self.rconn.sadd(key_player_games(black_email), game_id)
         return white_link, black_link, public_link, game_id
 
     def get_user(self, game_id, color):
         email_addr = self.rconn.get(key_email_from_game(game_id, color))
         link = self.rconn.get(key_link_from_game(game_id, color))
         return email_addr, link
+
+    def get_public_link(self, game_id):
+        return self.rconn.get(key_link_from_game(game_id, PUBLIC_LINK))
 
     def move(self, id, move):
         game = self.get(id)

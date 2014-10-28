@@ -4,7 +4,7 @@ import stats_store
 
 class VictoryStats(object):
     def __init__(self, rstore):
-        rstore = stats_store.StatsStore(rstore)
+        rstore = stats_store.wrap(rstore)
         self.victories = rstore.terminations()
         total = float(sum(self.victories.itervalues()))
         if total == 0:
@@ -25,7 +25,7 @@ class VictoryStats(object):
 
 class PlayStats(object):
     def __init__(self, rstore):
-        rstore = stats_store.StatsStore(rstore)
+        rstore = stats_store.wrap(rstore)
         self.game_count = rstore.game_count()
         self.player_count = rstore.player_count()
         self.game_lengths = []

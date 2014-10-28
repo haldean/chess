@@ -35,3 +35,7 @@ def key_terminations(termination):
 def key_game_lengths():
     "Mapping of game length (in plys) to frequency."
     return "chess:stats:game_lengths"
+
+def key_player_games(email):
+    "Set of game IDs played by a given player."
+    return "chess:player_games:%s" % email
