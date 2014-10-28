@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/user.css">
+<style>
+#content {
+    margin: 3em 0;
+    text-align: center;
+}
+
+#content a {
+    color: #888;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
+{% block body %}
+<div id="content">
+    <h2>{{ email }} doesn't play here.</h2>
+    <a href="/user">back.</a>
+</div>
+{% endblock %}

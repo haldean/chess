@@ -76,6 +76,9 @@ class RedisStore(object):
         self.rconn.sadd(key_player_games(black_email), game_id)
         return white_link, black_link, public_link, game_id
 
+    def user_exists(self, email_addr):
+        return self.rconn.exists(key_player_games(email_addr))
+
     def get_user(self, game_id, color):
         email_addr = self.rconn.get(key_email_from_game(game_id, color))
         link = self.rconn.get(key_link_from_game(game_id, color))

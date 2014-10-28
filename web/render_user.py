@@ -14,6 +14,8 @@ def render_recent_game(game_stats):
     """ % (utils.to_game_url(game_stats.public_link), game_str)
 
 def render_user(rstore, email_addr):
+    if not rstore.user_exists(email_addr):
+        return flask.render_template("user_404.html", email=email_addr)
     player_stats = stats.PlayerStats(rstore, email_addr, eco_data)
     rendered_games = {}
     for k, v in player_stats.game_stats.iteritems():
