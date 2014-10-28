@@ -39,6 +39,9 @@ class PlayerStats(object):
         self.game_stats = dict()
         for game_id in self.player_games:
             game_stats = self.get_game_stats(game_id, eco_data)
+            if game_stats.opponent == player:
+                # Don't count games played against yourself
+                continue
             if game_stats.player_win:
                 self.won.add(game_id)
             elif game_stats.game.termination is None:

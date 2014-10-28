@@ -145,6 +145,7 @@ img {
     box-sizing: border-box;
     font-size: 12pt;
     color: #999;
+    overflow-y: auto;
 }
 
 #summary a {
