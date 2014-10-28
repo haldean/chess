@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/user.css">
+{% endblock %}
+{% block body %}
+<h2>Stats for {{ player.email }}</h2>
+<div id="record">
+{{ player.win_count }}&ndash;{{ player.lose_count }}&ndash;{{ player.stalemate_count }}
+<div class="small">win &ndash; lose &ndash; stalemate</div>
+</div>
+<div class="two_columns">
+    <div id="won_games" class="game_list">
+    <h3>Games won</h3>
+    <ul>
+        {% for game_id in player.won %}
+        <li>{{ game_stats[game_id]|safe }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div id="lost_games" class="game_list">
+    <h3>Games lost</h3>
+    <ul>
+        {% for game_id in player.lost %}
+        <li>{{ game_stats[game_id]|safe }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div id="stalemate_games" class="game_list">
+    <h3>Games ending in stalemate</h3>
+    <ul>
+        {% for game_id in player.stalemate %}
+        <li>{{ game_stats[game_id]|safe }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div id="in_progress_games" class="game_list">
+    <h3>Games in progress</h3>
+    <ul>
+        {% for game_id in player.in_progress %}
+        <li>{{ game_stats[game_id]|safe }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+</div>
+{% endblock %}

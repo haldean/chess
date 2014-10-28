@@ -19,4 +19,4 @@ RUN python /chess/load_eco.py
 ADD api_keys.py /chess/api_keys.py
 EOF
 
-sudo docker build -t haldean/chess-frontend .
+sudo docker build --rm=true -t haldean/chess-frontend .

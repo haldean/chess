@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block head %}
+<script>
+$(document).ready(function() {
+    $("#lookup").on("submit", function(ev) {
+        ev.preventDefault();
+        var email = $("#email").val();
+        window.location = "/user/" + email;
+    });
+});
+</script>
+{% endblock %}
+{% block body %}
+<h2 class="top">Look up user stats</h2>
+<p>
+Look up a user's record by their email address below.
+</p>
+<form id="lookup" action="">
+    <label for="white_email">Email address:</label>
+    <input type="text" name="email" id="email">
+    <input type="submit" value="Look up">
+</form>
+{% endblock %}
