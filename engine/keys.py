@@ -39,3 +39,11 @@ def key_game_lengths():
 def key_player_games(email):
     "Set of game IDs played by a given player."
     return "chess:player_games:%s" % email
+
+def key_player_dashboard(email):
+    "Link text for accessing a player's dashboard."
+    return "chess:player:%s:dashboard" % email
+
+def key_player_from_dashboard(link):
+    "Link text for accessing a player's dashboard."
+    return "chess:dashboards:%s" % link

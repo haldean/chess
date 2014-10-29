@@ -1,7 +1,7 @@
 from engine import store
+import stats_store
 
-def aggregate():
-    rstore = store.RedisStore()
+def aggregate(rstore):
     games = rstore.all_games()
     game_lengths = {}
     max_len = max(len(g["game"].moves) for g in games)
@@ -14,5 +14,8 @@ def aggregate():
         rstore.rconn.hset("chess:stats:game_lengths", game_len, freq)
 
 if __name__ == "__main__":
-    aggregate()
-
+    argspec = argparse.ArgumentParser(description="Updates cached statistics")
+    argspec.add_argument("--redis_host", default="localhost")
+    args = argspec.parse_args()
+    rstore = stats_store.wrap(store.RedisStore(host=args.redis_host))
+    aggregate(rstore)

@@ -47,6 +47,10 @@ class Migrator(object):
                 key_link_from_game(game["game_id"], store.PUBLIC_LINK),
                 public_link)
 
+    def create_dashboard_links(self):
+        for player in self.rstore.rconn.sgetall(key_players()):
+            self.rstore.get_player_dashboard(player)
+
 CURRENT_MIGRATIONS = [
     Migrator.create_public_links,
     ]
