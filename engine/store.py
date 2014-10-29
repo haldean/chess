@@ -52,6 +52,13 @@ class RedisStore(object):
             if not self.rconn.exists(key_game_from_link(link)):
                 return link
 
+    def _pick_dashboard(self):
+        link = None
+        while True:
+            link = base64.b32encode(os.urandom(10)).lower()
+            if not self.rconn.exists(key_player_from_dashboard(link)):
+                return link
+
     def start_game(self, white_email, black_email):
         game_id, _ = self.begin()
         white_link = self._pick_link()
@@ -98,3 +105,10 @@ class RedisStore(object):
         self.rconn.set(key_game(game_id), json.dumps(game.to_json_dict()))
         if game.termination:
             self.rconn.sadd(key_terminations(game.termination), game_id)
+
+    def get_player_dashboard(self, email_addr):
+        if not self.rconn.exists(key_player_dashboard(email_addr)):
+            dash_link = self._pick_dashboard()
+            self.rconn.set(key_player_dashboard(email_addr), dash_link)
+            self.rconn.set(key_player_from_dashboard(dash_link), email_addr)
+        return self.rconn.get(key_player_dashboard(email_addr))
