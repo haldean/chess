@@ -39,6 +39,9 @@ class RedisStore(object):
             ))
         return games
 
+    def all_players(self):
+        return self.rconn.smembers(key_players())
+
     def game_from_link(self, link):
         color, game_id = json.loads(self.rconn.get(key_game_from_link(link)))
         if color == PUBLIC_LINK:
@@ -111,4 +114,8 @@ class RedisStore(object):
             dash_link = self._pick_dashboard()
             self.rconn.set(key_player_dashboard(email_addr), dash_link)
             self.rconn.set(key_player_from_dashboard(dash_link), email_addr)
+            return dash_link
         return self.rconn.get(key_player_dashboard(email_addr))
+
+    def get_player_from_dashboard(self, dash_link):
+        return self.rconn.get(key_player_from_dashboard(dash_link))

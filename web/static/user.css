@@ -15,6 +15,21 @@ h2 {
     font-weight: 400;
 }
 
+.huge {
+    font-size: 128pt;
+    font-weight: 700;
+    line-height: 100pt;
+    width: 100%;
+    text-align: center;
+}
+
+.smaller {
+    font-size: 14pt;
+    font-weight: 400;
+    display: block;
+    line-height: 20pt;
+}
+
 .game_list {
     width: 100%;
     box-sizing: border-box;
@@ -43,4 +58,17 @@ h2 {
     columns: 2;
     -webkit-columns: 2;
     -moz-columns: 2;
+}
+
+.two_columns .break {
+    break-after: always;
+    -webkit-column-break-after: always;
+}
+
+.two_columns .nobreak {
+    break-inside: never;
+}
+
+section {
+    margin-top: 24pt;
 }

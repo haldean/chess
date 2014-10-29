@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/user.css">
+{% endblock %}
+{% block body %}
+<h2>Dashboard for {{ email }}</h2>
+<section class="two_columns">
+
+<div class="huge break">
+<span class="smaller">Games in progress:</span>
+{{ in_progress|length }}
+</div>
+
+<div class="game_list nobreak">
+    <ul>
+        {% for game in in_progress %}
+        <li>{{ game|safe }}</li>
+        {% endfor %}
+    </ul>
+</div>
+</section>
+{% endblock %}

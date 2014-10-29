@@ -11,7 +11,7 @@ import validate_email
 
 from flask.ext import socketio
 from render_game import render_game
-from render_user import render_user
+from render_user import render_user, render_user_dashboard
 
 use_debug_server = False
 
@@ -35,7 +35,12 @@ def index():
 @logs.wrap
 @debug_route
 def debug():
-    return flask.render_template("debug.html", games=rstore.all_games())
+    player_dashes = {}
+    for player in rstore.all_players():
+        if player:
+            player_dashes[player] = rstore.get_player_dashboard(player)
+    return flask.render_template(
+        "debug.html", games=rstore.all_games(), players=player_dashes)
 
 @app.route("/debug/create_game")
 @logs.wrap
@@ -125,6 +130,11 @@ def user_search():
 @logs.wrap
 def user(email_addr):
     return render_user(rstore, email_addr)
+
+@app.route("/me/<dash_link>")
+@logs.wrap
+def dashboard(dash_link):
+    return render_user_dashboard(rstore, dash_link)
 
 @app.route("/manual-entry", methods=["GET", "POST"])
 @logs.wrap

@@ -10,15 +10,17 @@ class PlayerGameStats(stats.Stats):
             self.player_win = False
         if game.termination == chess.stalemate:
             self.player_win = False
-        white_email, _ = rstore.get_user(game_id, chess.white)
-        black_email, _ = rstore.get_user(game_id, chess.black)
+        white_email, white_link = rstore.get_user(game_id, chess.white)
+        black_email, black_link = rstore.get_user(game_id, chess.black)
         if player == white_email:
+            self.player_link = white_link
             self.opponent = black_email
             if game.termination == chess.white_victory:
                 self.player_win = True
             else:
                 self.player_win = False
         else:
+            self.player_link = black_link
             self.opponent = white_email
             if game.termination == chess.black_victory:
                 self.player_win = True
