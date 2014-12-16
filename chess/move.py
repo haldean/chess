@@ -199,10 +199,8 @@ def in_check(b, color, position=None):
         b = copy.deepcopy(b)
         b[position] = b[board_position]
         b[board_position] = None
-    for rank, file, piece in b:
-        if piece.color == color:
-            continue
-        if _move_is_valid(b, (rank, file), position):
+    for _, _, p in pieces_with_access(b, position):
+        if p.color != color:
             return True
     return False
 
@@ -421,7 +419,13 @@ def _move_is_valid(b, start, end):
         return False
     color = b[start].color
     post_move = b.apply(Move(start, end, "test-check-move", None))
-    if in_check(post_move, color):
+    # If we've captured the king, this move is valid. This should never come up
+    # in normal play, but it gives us a good base case for testing whether a
+    # player is in check.
+    if b[end] and b[end].color != color and b[end].piece == king:
+        return True
+    moved_into_check = in_check(post_move, color)
+    if moved_into_check:
         return False
     return True
 

@@ -143,6 +143,36 @@ class RulesTest(unittest.TestCase):
         b = chess.Board.parse(board)
         self.assertTrue(chess.in_check(b, chess.black))
 
+    def testBadInCheck(self):
+        board = """
+        __ __ __ __ __ __ __ __
+        __ __ __ bK __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wp __ __ __ __
+        wB __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ bR __ __
+        """
+        b = chess.Board.parse(board)
+        self.assertTrue(chess.in_check(b, chess.black))
+        self.assertTrue(chess.in_check(b, chess.white))
+
+    def testBadCheck(self):
+        board = """
+        __ __ __ __ __ __ __ __
+        __ __ __ bK __ bR __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wp __ __ __ __
+        wB __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ __ __ wK __ __ __ __
+        """
+        b = chess.Board.parse(board)
+        m = chess.Move.on_board((6, 5), (0, 5), b)
+        self.assertFalse(m.is_valid(b))
+
     def testCheckmate(self):
         board = """
         __ __ __ bK __ __ __ __
@@ -198,7 +228,6 @@ class RulesTest(unittest.TestCase):
         self.assertFalse(chess.in_checkmate(b, chess.black))
 
     def testStalemate(self):
-        '''
         board = """
         __ __ __ bK __ __ __ __
         __ __ __ wQ __ __ __ __
@@ -224,7 +253,6 @@ class RulesTest(unittest.TestCase):
         """
         b = chess.Board.parse(board)
         self.assertFalse(chess.in_stalemate(b, chess.black))
-        '''
 
         board = """
         bK __ __ __ __ __ __ __

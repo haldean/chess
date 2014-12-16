@@ -90,7 +90,7 @@ class Board(object):
             if d_rank == 2:
                 en_passantable = move.end
             elif d_rank == 1 and d_file == 1:
-                end_p = self[move.end] 
+                end_p = self[move.end]
                 if end_p is None:
                     if start_p.color == black:
                         passing_rank = 2
