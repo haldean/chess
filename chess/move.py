@@ -242,6 +242,8 @@ def in_checkmate(b, color):
                 return False
     threats = filter(lambda t: t[2].color != color,
                      pieces_with_access(b, position))
+    if not threats:
+        return False
     # If there's more than one threat and we can't move out of check, poor old
     # king is hosed; you can't capture two pieces in a single move.
     if len(threats) > 1:
