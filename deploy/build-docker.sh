@@ -17,6 +17,8 @@ cat << EOF >> Dockerfile
 RUN cd /chess; git pull origin master
 RUN python /chess/load_eco.py
 ADD api_keys.py /chess/api_keys.py
+EXPOSE 5000
+EXEC ["/usr/bin/python", "/chess/start.py", "--redis_host=chess-redis"]
 EOF
 
 sudo docker build --rm=true -t haldean/chess-frontend .
