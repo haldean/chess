@@ -103,6 +103,16 @@ class Board(object):
                         board[p_loc[0]][p_loc[1]] = None
             if move.end_rank in (0, 7):
                 board[move.end_rank][move.end_file] = Piece(start_p.color, queen)
+        elif start_p.piece == king:
+            # If the king moved, it can no longer castle.
+            for castle in self._open_castles:
+                if castle[0] == start_p.color:
+                    open_castles.remove(castle)
+        elif start_p.piece == rook:
+            if move.start_file == 7:
+                open_castles.discard((start_p.color, kingside))
+            if move.start_file == 0:
+                open_castles.discard((start_p.color, queenside))
         return self.__class__(board, open_castles, en_passantable)
 
     def find(self, piece):

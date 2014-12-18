@@ -69,6 +69,25 @@ class RulesTest(unittest.TestCase):
         m = chess.Move.on_board((7, 4), (7, 6), b)
         self.assertFalse(m.is_valid(b))
 
+    def testBadCastle(self):
+        board = """
+        bR __ __ __ bK bB bN bR
+        bp __ bp bp __ bp bp bp
+        __ __ __ __ __ __ __ __
+        __ __ __ __ __ __ __ __
+        __ bp __ __ __ __ __ __
+        wp __ __ __ bp __ __ __
+        __ wp wp wp wp wp wp wp
+        wR wN wB wQ wK wB wN wR
+        """
+        b = chess.Board.parse(board)
+        self.assertTrue(b.can_castle(chess.black, chess.queenside))
+        self.assertTrue(b.can_castle(chess.black, chess.kingside))
+        m = chess.Move.on_board((7, 0), (7, 2), b)
+        b = b.apply(m)
+        self.assertFalse(b.can_castle(chess.black, chess.queenside))
+        self.assertTrue(b.can_castle(chess.black, chess.kingside))
+
         board = """
         bR __ __ __ bK bB bN bR
         bp __ bp __ __ bp bp bp
