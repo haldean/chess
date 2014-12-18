@@ -107,7 +107,7 @@ class Board(object):
             # If the king moved, it can no longer castle.
             for castle in self._open_castles:
                 if castle[0] == start_p.color:
-                    open_castles.remove(castle)
+                    open_castles.discard(castle)
         elif start_p.piece == rook:
             if move.start_file == 7:
                 open_castles.discard((start_p.color, kingside))
